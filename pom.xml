@@ -1,0 +1,210 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>grisu.frontend</groupId>
+	<artifactId>grit</artifactId>
+	<version>0.1-SNAPSHOT</version>
+
+	<repositories>
+<!-- 		<repository> -->
+<!-- 			<id>jboss</id> -->
+<!-- 			<url>http://repository.jboss.org/maven2/</url> -->
+<!-- 		</repository> -->
+		<repository>
+			<id>releases</id>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>snapshots</id>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
+			</url>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<name>BeSTGRID Releases Repository</name>
+			<id>bestgrid.release</id>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>bestgrid.snapshot</id>
+			<name>BeSTGRID Snapshots Repository</name>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<issueManagement>
+		<system>Github</system>
+		<url>http://github.com/grisu/grit/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>https://code.ceres.auckland.ac.nz/hudson/job/Grisu-SNAPSHOT</url>
+	</ciManagement>
+	<developers>
+		<developer>
+			<id>markus</id>
+			<name>Markus Binsteiner</name>
+			<email>makkus@gmail.com</email>
+			<organization>The University of Auckland / Centre for eResearch / BeSTGRID</organization>
+			<organizationUrl>http://bestgrid.org</organizationUrl>
+			<timezone>New Zealand/Auckland</timezone>
+			<roles>
+			</roles>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/grisu/grit.git</connection>
+		<developerConnection>scm:git:git@github.com:grisu/grit.git</developerConnection>
+		<url>https://github.com/grisu/grit</url>
+	</scm>
+
+	<organization>
+		<name>Grisu open source project</name>
+		<url>https://grisu.github.com/grisu/</url>
+	</organization>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<compilerId>groovy-eclipse-compiler</compilerId>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-eclipse-compiler</artifactId>
+						<version>2.5.1-M3</version>
+						<exclusions>
+							<exclusion>
+								<groupId>org.codehaus.groovy</groupId>
+								<artifactId>groovy-eclipse-batch</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-eclipse-batch</artifactId>
+						<version>1.8.0-03</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/groovy</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/test/groovy</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
+
+							<descriptors>
+								<descriptor>tests.assembly.xml</descriptor>
+							</descriptors>
+							<finalName>grit</finalName>
+							<archive>
+
+								<index>true</index>
+								<manifest>
+									<mainClass>grisu.tests.TestStarter</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>bcprov.jar bcprov-jdk15-143.jar</Class-Path>
+								</manifestEntries>
+							</archive>
+
+						</configuration>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>1.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>grisu.frontend</groupId>
+			<artifactId>grisu-client</artifactId>
+			<version>0.3.7-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>grisu.backend</groupId>
+			<artifactId>grisu-core</artifactId>
+			<version>0.3.7-SNAPSHOT</version>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.codehaus.gpars</groupId> -->
+<!-- 			<artifactId>gpars</artifactId> -->
+<!-- 			<version>0.12</version> -->
+<!-- 		</dependency> -->
+	</dependencies>
+	<name>Gri(d|su) Test client written in Groovy</name>
+</project>
