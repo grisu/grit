@@ -53,6 +53,9 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 	protected void execute() {
 
 		for (def job : jobs) {
+			addLog("Creating job...")
+			job.createJob(group)
+
 			addLog("Submitting job: "+job.getJobname())
 			job.submitJob(true)
 			addLog("Job submitted.")
@@ -140,8 +143,6 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 			}
 
 			job.setWalltimeInSeconds(walltime)
-			addLog("Creating job...")
-			job.createJob(group)
 
 			jobs.add(job)
 		}

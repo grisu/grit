@@ -12,9 +12,9 @@ abstract class AbstractTest implements Test {
 
 	final log = Maps.newTreeMap()
 
-	final ServiceInterface si
-	final int batch
-	final int parallel
+	public final ServiceInterface si
+	public final int batch
+	public final int parallel
 
 	Date startedTime
 	Date finishedTime
