@@ -12,6 +12,11 @@ cleanJobs {
 	// the number of parallel test executions
 	runs = 1
 
+	// whether to kill the jobs seperately or use the "multiple-kill-jobs"-method "killJobs()
+	kill_jobs_seperately = false
+	
+	// whether to wait for all jobs to be finished before start killing them...
+	wait_for_jobs_to_finish = false
 	// the group to use to submit the jobs
 	group = '/nz/nesi'
 	// the amount of jobs to submit in serial

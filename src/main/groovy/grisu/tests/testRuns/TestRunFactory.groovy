@@ -36,7 +36,9 @@ class TestRunFactory {
 			tr.setName(name)
 
 			for ( def key : configMap.keySet() ) {
-				tr.class.getField(key).set(tr, configMap.get(key))
+				def field = tr.class.getField(key)
+				def value = configMap.get(key)
+				field.set(tr, value)
 			}
 			result.add(tr)
 		}

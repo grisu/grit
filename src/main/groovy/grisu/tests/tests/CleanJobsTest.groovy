@@ -33,6 +33,8 @@ class CleanJobsTest extends AbstractTest implements Test, PropertyChangeListener
 	final String queue
 	final List inputfiles
 
+	final boolean killJobsSeperately
+	final boolean waitForJobsToFinish
 	int concurrentJobSubmissions = 1
 
 	final int walltime
@@ -44,7 +46,7 @@ class CleanJobsTest extends AbstractTest implements Test, PropertyChangeListener
 
 
 	public CleanJobsTest(ServiceInterface si, int batch, int id, int amount_jobs_in_serial, String group, String application, String commandline, int walltime, String queue,
-	List inputFiles, int concurrentJobSubmissions) {
+	List inputFiles, int concurrentJobSubmissions, boolean killJobsSeperately, boolean wait_for_jobs_to_finish) {
 		super(si, batch, id)
 		fm = GrisuRegistryManager.getDefault(si).getFileManager()
 
@@ -54,14 +56,30 @@ class CleanJobsTest extends AbstractTest implements Test, PropertyChangeListener
 		this.jobname_prefix = 'deleteJobsTest_'+batch+'_'+id
 		this.walltime = walltime
 		this.concurrentJobSubmissions = concurrentJobSubmissions
+		this.killJobsSeperately = killJobsSeperately
+		this.waitForJobsToFinish = wait_for_jobs_to_finish
 	}
 
 	@Override
 	protected void execute() {
 
-		jobs.each { job ->
-			addLog("Killing job: "+job.getJobname())
-			job.kill(true)
+		if ( killJobsSeperately ) {
+			jobs.each { job ->
+				addLog("Killing job: "+job.getJobname())
+				job.kill(true)
+			}
+		} else {
+
+			def jobnames = []
+			jobs.each { job ->
+				jobnames.add(job.getJobname())
+			}
+			def list = DtoStringList.fromStringColletion(jobnames)
+			addLog("Killing all jobs...")
+			String handle = si.killJobs(list, true)
+			addLog("Waiting for killing of jobs to finish...")
+			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false, false)
+			addLog("Killing of jobs finished.")
 		}
 	}
 
@@ -94,7 +112,7 @@ class CleanJobsTest extends AbstractTest implements Test, PropertyChangeListener
 	protected void tearDown() {
 
 		if (!success) {
-			tests.each { job ->
+			jobs.each { job ->
 				addLog("Killing job "+job.getJobname())
 				try {
 					job.kill(true)
@@ -186,9 +204,11 @@ class CleanJobsTest extends AbstractTest implements Test, PropertyChangeListener
 			}
 		}
 
-		jobs.each { job ->
-			addLog("Waiting for job to finish: "+job.getJobname())
-			job.waitForJobToFinish(4)
+		if (waitForJobsToFinish) {
+			jobs.each { job ->
+				addLog("Waiting for job to finish: "+job.getJobname())
+				job.waitForJobToFinish(4)
+			}
 		}
 	}
 

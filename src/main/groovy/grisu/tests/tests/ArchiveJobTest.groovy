@@ -44,7 +44,7 @@ class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListene
 		archiveUrl = job.archive()
 
 		addLog("Waiting for archiving of job to finish.")
-		StatusObject so =StatusObject.waitForActionToFinish(si, ServiceInterface.ARCHIVE_STATUS_PREFIX+jobname, 5, true, false)
+		StatusObject so =StatusObject.waitForActionToFinish(si, archiveUrl, 5, true, false)
 
 		if (so.getStatus().isFailed()) {
 			def ec = so.getStatus().getErrorCause()
