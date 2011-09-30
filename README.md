@@ -12,6 +12,13 @@ In order to build Grisu from the git sources, you need:
 - [git](http://git-scm.com) 
 - [Apache Maven](http://maven.apache.org) (version >=2)
 
+Download
+----------
+
+A pre-build binary of Grit can be found here:
+
+https://code.ceres.auckland.ac.nz/jenkins/job/Grit-SNAPSHOT/lastSuccessfulBuild/artifact/target/grit-binary.jar
+
 Checking out sourcecode
 -------------------------------------
 
