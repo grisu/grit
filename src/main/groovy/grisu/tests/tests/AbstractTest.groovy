@@ -147,6 +147,7 @@ abstract class AbstractTest implements Test {
 			myLogger.debug("Finished test "+batch+" / "+parallel+ " with error: "+all.getLocalizedMessage())
 		} finally {
 			duration = finishedTime.getTime()-startedTime.getTime()
+			addLog("Duration of test execution: "+duration+" ms")
 		}
 	}
 

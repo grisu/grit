@@ -5,6 +5,7 @@ import grisu.control.exceptions.NoSuchJobException
 import grisu.frontend.model.job.JobObject
 import grisu.model.FileManager
 import grisu.model.GrisuRegistryManager
+import grisu.tests.util.Input
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
@@ -14,25 +15,26 @@ class CleanJobTest extends AbstractTest implements Test, PropertyChangeListener 
 	private final jobname
 
 	final String group
-	final List inputfiles
 
 	final int walltime = 60
 	final String application = "UnixCommands"
 
 	final FileManager fm
 
+	final String queue
+
 	String archiveUrl
 
 	String jobdir
 
 	private final JobObject job
-	private final def ifiles = [:]
+	final int no_of_files;
 
-	public CleanJobTest(ServiceInterface si, int batch, int id, String group, List inputFiles) {
+	public CleanJobTest(ServiceInterface si, int batch, int id, String group, String queue, int no_of_files) {
 		super(si, batch, id)
 		fm = GrisuRegistryManager.getDefault(si).getFileManager()
-
-		this.inputfiles = inputFiles
+		this.queue = queue
+		this.no_of_files = no_of_files
 		this.group = group
 		this.jobname = 'cleanJobTest_'+batch+'_'+id
 		job = new JobObject(si)
@@ -93,13 +95,15 @@ class CleanJobTest extends AbstractTest implements Test, PropertyChangeListener 
 		job.setJobname(this.jobname)
 
 		job.setApplication(application)
-		job.setCommandline('ls -la')
+		job.setCommandline('sh createFiles.sh '+no_of_files+' test0.txt')
 
-		for ( def inputfile : inputfiles) {
-			job.addInputFileUrl(inputfile)
-			long size = fm.getFileSize(inputfile)
-			ifiles.put(inputfile, size)
-		}
+		job.setSubmissionLocation(queue)
+
+		def script = Input.getFile('createFiles.sh')
+		def file = Input.getFile('test0.txt')
+		job.addInputFileUrl(script)
+		job.addInputFileUrl(file)
+
 
 		job.setWalltimeInSeconds(walltime)
 		addLog("Creating job...")

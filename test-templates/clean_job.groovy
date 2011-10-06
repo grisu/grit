@@ -1,3 +1,4 @@
+import grisu.jcommons.constants.Constants
 import grisu.tests.testRuns.*
 
 cleanJob {
@@ -10,14 +11,10 @@ cleanJob {
 	runs = 1
 
 	group = '/nz/nesi'
+	
+	queue = Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING
 
-	//inputfiles = ['gsiftp://df.auckland.ac.nz/BeSTGRID/home/markus.binsteiner2/4gbfile.tst']
-	//	inputfiles = [
-	//		'gsiftp://df.auckland.ac.nz/BeSTGRID/home/markus.binsteiner2/4gbfile.tst',
-	//		'gsiftp://df.auckland.ac.nz/BeSTGRID/home/markus.binsteiner2/simpleTestFile.txt'
-	//	]
-	inputfiles = [
-		'gsiftp://df.auckland.ac.nz/BeSTGRID/home/markus.binsteiner2/simpleTestFile.txt'
-	]
+	// how many times the test input file should be copied inside the job. that determines how many files there are to be deleted in the jobdir
+	no_of_files = 10
 
 }

@@ -7,7 +7,8 @@ import grisu.tests.tests.Test
 class CleanJobTestRun extends AbstractTestRun implements TestRun {
 
 	public String group
-	public List inputfiles
+	public int no_of_files
+	public String queue
 
 	public void setup() {
 	}
@@ -16,6 +17,6 @@ class CleanJobTestRun extends AbstractTestRun implements TestRun {
 	}
 
 	public Test getTest(ServiceInterface si, int batch, int id) {
-		return new CleanJobTest(si, batch, id, group, inputfiles)
+		return new CleanJobTest(si, batch, id, group, queue, no_of_files)
 	}
 }
