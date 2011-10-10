@@ -40,7 +40,7 @@ abstract class AbstractTestRun {
 		this.name = name
 	}
 
-	private synchronized void addLog(String msg) {
+	protected synchronized void addLog(String msg) {
 
 		printMessage(msg)
 

@@ -1,10 +1,10 @@
 package grisu.tests.testRuns
 
 import grisu.control.ServiceInterface
-import grisu.tests.tests.CleanJobTest
+import grisu.tests.tests.DeleteBigFolderTest
 import grisu.tests.tests.Test
 
-class CleanJobTestRun extends AbstractTestRun implements TestRun {
+class DeleteBigFoldersTestRun extends AbstractTestRun implements TestRun {
 
 	public String group
 	public int no_of_files
@@ -18,6 +18,6 @@ class CleanJobTestRun extends AbstractTestRun implements TestRun {
 	}
 
 	public Test getTest(ServiceInterface si, int batch, int id) {
-		return new CleanJobTest(si, batch, id, group, queue, no_of_folders, no_of_files)
+		return new DeleteBigFolderTest(si, batch, id, group, queue, no_of_folders, no_of_files)
 	}
 }

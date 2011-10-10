@@ -10,7 +10,7 @@ import grisu.tests.util.Input
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 
-class CleanJobTest extends AbstractTest implements Test, PropertyChangeListener {
+class DeleteBigFolderTest extends AbstractTest implements Test, PropertyChangeListener {
 
 	private final jobname
 
@@ -29,14 +29,14 @@ class CleanJobTest extends AbstractTest implements Test, PropertyChangeListener 
 	final int no_of_files;
 	final int no_of_folders;
 
-	public CleanJobTest(ServiceInterface si, int batch, int id, String group, String queue, int no_of_folders, int no_of_files) {
+	public DeleteBigFolderTest(ServiceInterface si, int batch, int id, String group, String queue, int no_of_folders, int no_of_files) {
 		super(si, batch, id)
 		fm = GrisuRegistryManager.getDefault(si).getFileManager()
 		this.queue = queue
 		this.no_of_files = no_of_files
 		this.no_of_folders = no_of_folders
 		this.group = group
-		this.jobname = 'cleanJobTest_'+batch+'_'+id
+		this.jobname = 'deleteBigFolderTest_'+batch+'_'+id
 		job = new JobObject(si)
 	}
 
@@ -44,19 +44,19 @@ class CleanJobTest extends AbstractTest implements Test, PropertyChangeListener 
 	protected void execute() {
 
 		jobdir = job.getJobDirectoryUrl()
-		addLog("Killing job...")
-		job.kill(true)
-		addLog("Job killed.")
+		addLog("Deleting folder: "+jobdir)
+		fm.deleteFile(jobdir);
+		addLog("Folder deleted.")
 	}
 
 	@Override
 	protected void check() {
 
 		if ( fm.fileExists(jobdir) ) {
-			addLog("Jobdir still exists, clean job failed: "+jobdir)
+			addLog("Folder still exists, clean job failed: "+jobdir)
 			success = false
 		} else {
-			addLog("Jobdir deleted, test successful.")
+			addLog("Folder deleted, test successful.")
 			success = true
 		}
 	}

@@ -1,9 +1,9 @@
 import grisu.jcommons.constants.Constants
 import grisu.tests.testRuns.*
 
-cleanJob {
+deleteBigFolder {
 
-	testrun = CleanJobTestRun
+	testrun = DeleteBigFoldersTestRun
 
 	disable = false
 	
@@ -16,5 +16,6 @@ cleanJob {
 
 	no_of_folders = 10
 	no_of_files = 10
+	
 
 }

@@ -27,6 +27,8 @@ genericJob {
 	// whether to wait for one job to finish executing before submitting the next job
 	// or just submit all jobs one after another
 	wait_for_job_to_finish_before_next_job_submit = false
+	// how many jobs should be created in parallel during setup
+	concurrent_job_creations = 1
 	// whether the test is considered failed if the job execution (not submission) fails (true)
 	// or not (false)
 	requre_job_success = false

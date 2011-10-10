@@ -1,11 +1,17 @@
 #!/bin/bash
 
-TIMES=$1
-INPUT=$2
+FOLDERS=$1
+FILES=$2
+INPUT=$3
 
-for i in $(seq 1 $TIMES)
+for i in $(seq 1 $FOLDERS)
 do
-   FILE="file_$i"
-   echo "copying file $FILE"
-   cp $INPUT $FILE
+   FOLDER="folder_$i"
+   mkdir -p $FOLDER
+   for j in $(seq 1 $FILES)
+   do
+       FILE="file_$j"
+       echo "copying file $FOLDER/$FILE"
+       cp $INPUT "$FOLDER/$FILE"
+   done
 done
