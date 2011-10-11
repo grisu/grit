@@ -55,7 +55,7 @@ class CopyTest extends AbstractTest implements Test {
 		for ( i in 1..repeats ) {
 
 			addLog ("Copying file...")
-			fm.cp(source, target, true)
+			fm.cp(source, remoteDir, true)
 			addLog ("Copying finished.")
 		}
 	}
