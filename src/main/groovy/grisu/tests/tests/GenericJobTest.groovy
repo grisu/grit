@@ -10,8 +10,6 @@ import grisu.model.status.StatusObject
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 import com.google.common.collect.Lists
 import com.google.common.collect.Maps
@@ -35,14 +33,13 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 
 	final boolean wait_for_job_to_finish_before_next_job_submit
 	final boolean require_job_success
-	final int concurrent_job_creations
 
 	final int walltime
 
 	final FileManager fm
 
 	public GenericJobTest(ServiceInterface si, int batch, int id, int amount_jobs_in_serial, String group, String application, String commandline, int walltime, String queue,
-	List inputFiles, boolean wait_for_job_to_finish_before_next_job_submit, boolean require_job_success, int concurrent_job_creations) {
+	List inputFiles, boolean wait_for_job_to_finish_before_next_job_submit, boolean require_job_success) {
 		super(si, batch, id)
 		fm = GrisuRegistryManager.getDefault(si).getFileManager()
 
@@ -53,7 +50,6 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 		this.walltime = walltime
 		this.wait_for_job_to_finish_before_next_job_submit = wait_for_job_to_finish_before_next_job_submit
 		this.require_job_success = require_job_success
-		this.concurrent_job_creations = concurrent_job_creations
 	}
 
 	@Override
@@ -134,43 +130,33 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false, false)
 		}
 
-		def pool = Executors.newFixedThreadPool(concurrent_job_creations)
-
 		Map exceptions = Collections.synchronizedMap(Maps.newHashMap())
 
-		for ( i in 0..<amount_jobs ) {
+		for ( final int i=1; i<=amount_jobs; i++ ) {
 
-			Thread t = new Thread() {
-						public void run() {
 
-							try {
-								JobObject job = new JobObject(si)
+			try {
+				JobObject job = new JobObject(si)
 
-								job.addPropertyChangeListener(GenericJobTest.this)
+				job.addPropertyChangeListener(this)
 
-								job.setJobname(GenericJobTest.this.jobname_prefix+"_j"+i)
+				job.setJobname(this.jobname_prefix+"_j"+i)
 
-								job.setApplication(application)
-								job.setCommandline('ls -la')
+				job.setApplication(application)
+				job.setCommandline('ls -la')
 
-								for ( def inputfile : inputfiles) {
-									job.addInputFileUrl(inputfile)
-								}
+				for ( def inputfile : inputfiles) {
+					job.addInputFileUrl(inputfile)
+				}
 
-								job.setWalltimeInSeconds(walltime)
+				job.setWalltimeInSeconds(walltime)
 
-								jobs.add(job)
-							} catch (all) {
-								exceptions.add(all)
-							}
-						}
-					}
-
-			pool.execute(t)
+				jobs.add(job)
+			} catch (all) {
+				exceptions.add(all)
+			}
 		}
 
-		pool.shutdown();
-		pool.awaitTermination(10, TimeUnit.HOURS)
 
 		if ( exceptions ) {
 			addLog ("At least one job creation failed: ")

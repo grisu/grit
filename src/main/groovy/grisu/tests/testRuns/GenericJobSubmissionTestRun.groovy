@@ -15,7 +15,6 @@ class GenericJobSubmissionTestRun extends AbstractTestRun implements TestRun {
 	public boolean wait_for_job_to_finish_before_next_job_submit
 	public int walltime
 	public boolean require_job_success
-	public int concurrent_job_creations
 
 	public void setup() {
 	}
@@ -24,6 +23,6 @@ class GenericJobSubmissionTestRun extends AbstractTestRun implements TestRun {
 	}
 
 	public Test getTest(ServiceInterface si, int batch, int id) {
-		return new GenericJobTest(si, batch, id, amount_jobs, group, application, commandline, walltime, queue, inputfiles, wait_for_job_to_finish_before_next_job_submit, require_job_success, concurrent_job_creations)
+		return new GenericJobTest(si, batch, id, amount_jobs, group, application, commandline, walltime, queue, inputfiles, wait_for_job_to_finish_before_next_job_submit, require_job_success)
 	}
 }
