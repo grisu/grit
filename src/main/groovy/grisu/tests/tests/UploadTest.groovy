@@ -4,7 +4,6 @@ import grisu.control.ServiceInterface
 import grisu.jcommons.utils.FileAndUrlHelpers
 import grisu.model.FileManager
 import grisu.model.GrisuRegistryManager
-import grisu.tests.util.Input
 
 class UploadTest extends AbstractTest implements Test {
 
@@ -21,13 +20,12 @@ class UploadTest extends AbstractTest implements Test {
 	final String remoteDir
 	final String remoteFile
 
+	final int repeats
+
 	long resultSize = -1L
 
-	public UploadTest(ServiceInterface si, int batch, int id, String target) {
-		this(si, batch, id, Input.getFile(DEFAULT_FILE), target)
-	}
 
-	public UploadTest(ServiceInterface si, int batch, int id, String source, String target) {
+	public UploadTest(ServiceInterface si, int batch, int id, String source, String target, int repeats) {
 		super(si, batch, id)
 		this.fm = GrisuRegistryManager.getDefault(si).getFileManager()
 		this.target = target
@@ -37,6 +35,8 @@ class UploadTest extends AbstractTest implements Test {
 		this.filesize = new File(file).length()
 		this.remoteDir = target+"/"+id
 		this.remoteFile = remoteDir + "/"+filename
+
+		this.repeats = repeats
 	}
 
 	protected void check() {
@@ -54,10 +54,11 @@ class UploadTest extends AbstractTest implements Test {
 	}
 
 	protected void execute() {
-
-		addLog ("Uploading file...")
-		fm.uploadUrlToDirectory(file, remoteDir, false)
-		addLog ("Upload finished.")
+		for ( i in 1..repeats ) {
+			addLog ("Uploading file... ("+i+". time)")
+			fm.uploadUrlToDirectory(file, remoteDir, true)
+			addLog ("Upload finished.")
+		}
 	}
 
 
