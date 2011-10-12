@@ -5,8 +5,7 @@ import grisu.control.ServiceInterface
 import grisu.frontend.model.job.JobObject
 import grisu.model.FileManager
 import grisu.model.GrisuRegistryManager
-import grisu.model.dto.DtoStringList
-import grisu.model.status.StatusObject
+import grisu.tests.testRuns.GenericJobSubmissionTestRun
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
@@ -46,7 +45,7 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 		this.amount_jobs = amount_jobs_in_serial
 		this.inputfiles = inputFiles
 		this.group = group
-		this.jobname_prefix = 'genericTestJob_'+batch+'_'+id
+		this.jobname_prefix = GenericJobSubmissionTestRun.JOBNAME_PREFIX +'_'+batch+'_'+id
 		this.walltime = walltime
 		this.wait_for_job_to_finish_before_next_job_submit = wait_for_job_to_finish_before_next_job_submit
 		this.require_job_success = require_job_success
@@ -100,35 +99,11 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 
 	@Override
 	protected void tearDown() {
-
-		addLog("Killing jobs...")
-		def toKill = []
-		jobs.each{ job ->
-			try {
-				job.kill(true)
-			} catch (all) {
-				addLog("Failed to kill job "+job.getJobname()+": "+all.getLocalizedMessage())
-			}
-		}
-
-		addLog("All jobs killed")
 	}
 
 	@Override
 	protected void setup() {
 
-		addLog("Killing potentially existing jobs...")
-		def toKill = []
-		for (def jobname in si.getAllJobnames(null).asSortedSet()) {
-			if (jobname.startsWith(jobname_prefix)) {
-				toKill.add(jobname)
-			}
-		}
-
-		if ( toKill) {
-			String handle = si.killJobs(DtoStringList.fromStringColletion(toKill), true)
-			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false, false)
-		}
 
 		Map exceptions = Collections.synchronizedMap(Maps.newHashMap())
 

@@ -27,7 +27,6 @@ class DownloadTest extends AbstractTest implements Test {
 		this.fm = GrisuRegistryManager.getDefault(si).getFileManager()
 
 		this.source = source
-		println("REPS: "+r)
 		this.rep = r
 	}
 
