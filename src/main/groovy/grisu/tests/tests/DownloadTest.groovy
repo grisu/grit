@@ -17,7 +17,7 @@ class DownloadTest extends AbstractTest implements Test {
 
 	private File file
 
-	final int repeats
+	private final int rep
 
 	long resultSize = -1L
 
@@ -27,8 +27,8 @@ class DownloadTest extends AbstractTest implements Test {
 		this.fm = GrisuRegistryManager.getDefault(si).getFileManager()
 
 		this.source = source
-
-		this.repeats = r
+		println("REPS: "+r)
+		this.rep = r
 	}
 
 	protected void check() {
@@ -46,7 +46,7 @@ class DownloadTest extends AbstractTest implements Test {
 	}
 
 	protected void execute() {
-		for ( i in 1..repeats ) {
+		for ( int i=1; i<=this.rep; i++ ) {
 			addLog ("Downloading file... ("+i+". time)")
 			this.file = fm.downloadFile(source, true)
 

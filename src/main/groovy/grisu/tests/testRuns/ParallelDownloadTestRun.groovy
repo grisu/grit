@@ -11,7 +11,7 @@ class ParallelDownloadTestRun extends AbstractTestRun implements TestRun {
 
 	@Override
 	public Test getTest(ServiceInterface si, int batch, int id) {
-		return new DownloadTest(si, batch, id, sourceFile, int repeats)
+		return new DownloadTest(si, batch, id, sourceFile, repeats)
 	}
 
 	public void setup() {
