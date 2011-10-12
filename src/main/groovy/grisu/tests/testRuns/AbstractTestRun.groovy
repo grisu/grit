@@ -1,7 +1,6 @@
 package grisu.tests.testRuns
 
 import grisu.control.ServiceInterface
-import grisu.control.serviceInterfaces.AbstractServiceInterface
 import grisu.tests.tests.Test
 
 import java.util.concurrent.Callable
@@ -18,7 +17,7 @@ abstract class AbstractTestRun {
 
 	final log = Maps.newTreeMap()
 
-	Logger myLogger = Logger.getLogger(AbstractServiceInterface.class.getName())
+	Logger myLogger = Logger.getLogger(AbstractTestRun.class.getName())
 
 	public List serviceInterfaces
 	public int runs
