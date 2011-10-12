@@ -195,11 +195,11 @@
 			<artifactId>grisu-client</artifactId>
 			<version>0.3.7-SNAPSHOT</version>
 		</dependency>
-<!--		<dependency>
+		<dependency>
 			<groupId>grisu.backend</groupId>
 			<artifactId>grisu-core</artifactId>
 			<version>0.3.7-SNAPSHOT</version>
-		</dependency>-->
+		</dependency>
 <!-- 		<dependency> -->
 <!-- 			<groupId>org.codehaus.gpars</groupId> -->
 <!-- 			<artifactId>gpars</artifactId> -->
