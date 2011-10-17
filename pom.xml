@@ -6,10 +6,10 @@
 	<version>0.1-SNAPSHOT</version>
 
 	<repositories>
-<!-- 		<repository> -->
-<!-- 			<id>jboss</id> -->
-<!-- 			<url>http://repository.jboss.org/maven2/</url> -->
-<!-- 		</repository> -->
+		<!-- <repository> -->
+		<!-- <id>jboss</id> -->
+		<!-- <url>http://repository.jboss.org/maven2/</url> -->
+		<!-- </repository> -->
 		<repository>
 			<id>releases</id>
 			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
@@ -175,6 +175,18 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<pushChanges>false</pushChanges>
+					<localCheckout>true</localCheckout>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
@@ -200,11 +212,11 @@
 			<artifactId>grisu-core</artifactId>
 			<version>0.3.7-rc5</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.codehaus.gpars</groupId> -->
-<!-- 			<artifactId>gpars</artifactId> -->
-<!-- 			<version>0.12</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.codehaus.gpars</groupId> -->
+		<!-- <artifactId>gpars</artifactId> -->
+		<!-- <version>0.12</version> -->
+		<!-- </dependency> -->
 	</dependencies>
 	<name>Gri(d|su) Test client written in Groovy</name>
 </project>
