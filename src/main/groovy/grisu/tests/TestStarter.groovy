@@ -1,9 +1,12 @@
 package grisu.tests
 
 import grisu.frontend.control.login.LoginManager
+import grisu.frontend.view.cli.CliHelpers
 import grisu.tests.testRuns.TestRunFactory
 
 static void main(args) {
+
+	CliHelpers.enableProgressDisplay(false)
 
 	def cli = new CliBuilder(usage: 'grit -b [backend] testfiles')
 

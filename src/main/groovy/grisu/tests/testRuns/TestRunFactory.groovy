@@ -29,17 +29,26 @@ class TestRunFactory {
 				configMap.remove("disable")
 			}
 
-			def constructor = configMap.get("testrun").getConstructor()
-			configMap.remove("testrun")
+			def testclass = configMap.get("test")
+			configMap.remove("test")
 
-			TestRun tr = constructor.newInstance()
+			def batches = configMap.get("batches")
+			configMap.remove("batches")
+			def runs = configMap.get("runs")
+			configMap.remove("runs")
+
+			TestRun tr = new TestRun()
 			tr.setName(name)
-
-			for ( def key : configMap.keySet() ) {
-				def field = tr.class.getField(key)
-				def value = configMap.get(key)
-				field.set(tr, value)
+			tr.setTestClass(testclass)
+			if (batches) {
+				tr.setBatches(batches)
 			}
+			if (runs) {
+				tr.setRuns(runs)
+			}
+
+			tr.setConfigMap(configMap)
+
 			result.add(tr)
 		}
 

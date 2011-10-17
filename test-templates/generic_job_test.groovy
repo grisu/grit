@@ -1,9 +1,10 @@
 import grisu.jcommons.constants.Constants
 import grisu.tests.testRuns.*
+import grisu.tests.tests.GenericJobTest;
 
 genericJob {
 
-	testrun = GenericJobSubmissionTestRun
+	test = GenericJobTest
 
 	disable = false
 	
@@ -11,6 +12,8 @@ genericJob {
 	batches = 1
 	// the number of parallel test executions
 	runs = 1
+	
+	jobname_prefix = 'generic_job_test'
 
 	// the group to use to submit the jobs
 	group = '/nz/nesi'
@@ -29,7 +32,7 @@ genericJob {
 	wait_for_job_to_finish_before_next_job_submit = false
 	// whether the test is considered failed if the job execution (not submission) fails (true)
 	// or not (false)
-	requre_job_success = false
+	require_job_success = false
 	// a list of input files
 	inputfiles = [
 		'gsiftp://df.auckland.ac.nz/BeSTGRID/home/markus.binsteiner2/simpleTestFile.txt'

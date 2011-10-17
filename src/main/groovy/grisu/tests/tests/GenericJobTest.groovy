@@ -4,8 +4,6 @@ import grisu.control.JobConstants
 import grisu.control.ServiceInterface
 import grisu.frontend.model.job.JobObject
 import grisu.model.FileManager
-import grisu.model.GrisuRegistryManager
-import grisu.tests.testRuns.GenericJobSubmissionTestRun
 
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
@@ -20,36 +18,36 @@ import com.google.common.collect.Maps
  */
 class GenericJobTest extends AbstractTest implements Test, PropertyChangeListener {
 
+	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
+
+		killAllJobsWithPrefix(sis, config.get("jobname_prefix"))
+	}
+
+
+	public static void teardownTestRun(List<ServiceInterface> sis, Map config) {
+
+		killAllJobsWithPrefix(sis, config.get("jobname_prefix"))
+	}
+
+
 	List jobs = Collections.synchronizedList(Lists.newLinkedList())
-	private final jobname_prefix
 
-	private final int amount_jobs
-	final String group
-	final String application
-	final String commandline
-	final String queue
-	final List inputfiles
+	public  String jobname_prefix
 
-	final boolean wait_for_job_to_finish_before_next_job_submit
-	final boolean require_job_success
+	public int amount_jobs
+	public String group
+	public String application
+	public String commandline
+	public String queue
+	public List inputfiles
 
-	final int walltime
+	public boolean wait_for_job_to_finish_before_next_job_submit
+	public boolean require_job_success
+
+	public int walltime
 
 	final FileManager fm
 
-	public GenericJobTest(ServiceInterface si, int batch, int id, int amount_jobs_in_serial, String group, String application, String commandline, int walltime, String queue,
-	List inputFiles, boolean wait_for_job_to_finish_before_next_job_submit, boolean require_job_success) {
-		super(si, batch, id)
-		fm = GrisuRegistryManager.getDefault(si).getFileManager()
-
-		this.amount_jobs = amount_jobs_in_serial
-		this.inputfiles = inputFiles
-		this.group = group
-		this.jobname_prefix = GenericJobSubmissionTestRun.JOBNAME_PREFIX +'_'+batch+'_'+id
-		this.walltime = walltime
-		this.wait_for_job_to_finish_before_next_job_submit = wait_for_job_to_finish_before_next_job_submit
-		this.require_job_success = require_job_success
-	}
 
 	@Override
 	protected void execute() {

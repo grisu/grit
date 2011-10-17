@@ -1,62 +1,66 @@
 package grisu.tests.tests
 
 import grisu.control.ServiceInterface
-import grisu.control.exceptions.NoSuchJobException
 import grisu.frontend.model.job.JobObject
 import grisu.model.FileManager
-import grisu.model.GrisuRegistryManager
 import grisu.model.status.StatusObject
 
-import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
+
+import com.google.common.collect.Lists
 
 class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListener {
 
-	private final jobname
 
-	final String group
-	final List inputfiles
+	List archiveUrls = Collections.synchronizedList(Lists.newArrayList())
+	List jobdirs = Collections.synchronizedList(Lists.newArrayList())
+	def failedTests = []
 
-	final int walltime = 60
-	final String application = "UnixCommands"
+	private final static Map ifiles = [:]
 
-	final FileManager fm
+	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
 
-	String archiveUrl
+		killAllJobsWithPrefix(sis, config)
 
-	private final JobObject job
-	private final def ifiles = [:]
+		List files = config.get("inputfiles")
 
-	public ArchiveJobTest(ServiceInterface si, int batch, int id, String group, List inputFiles) {
-		super(si, batch, id)
-		fm = GrisuRegistryManager.getDefault(si).getFileManager()
+		ServiceInterface si = sis[0]
 
-		this.inputfiles = inputFiles
-		this.group = group
-		this.jobname = 'archiveTestJob_'+batch+'_'+id
-		job = new JobObject(si)
+		addRunLog("Getting filesizes of input files...")
+		for ( def tmp : files ) {
+			def file = FileManager.getFilename(tmp)
+			long size = si.getFileSize(tmp)
+			ifiles[file] = size
+			addRunLog("Filesize for "+file+": "+size)
+		}
 	}
+
 
 	@Override
 	protected void execute() {
 
-		addLog("Kicking off archiving of job...")
-		archiveUrl = job.archive()
+		for ( JobObject job : jobs ) {
 
-		addLog("Waiting for archiving of job to finish.")
-		StatusObject so =StatusObject.waitForActionToFinish(si, archiveUrl, 5, true, false)
+			addLog("Kicking off archiving of job...")
+			def archiveUrl = job.archive()
 
-		if (so.getStatus().isFailed()) {
-			def ec = so.getStatus().getErrorCause()
-			if ( ! ec ) {
-				ec = "Archiving of job failed: unknown reason"
+			archiveUrls.add(archiveUrl)
+
+			addLog("Waiting for archiving of job to finish.")
+			StatusObject so =StatusObject.waitForActionToFinish(si, archiveUrl, 5, true, false)
+
+			if (so.getStatus().isFailed()) {
+				def ec = so.getStatus().getErrorCause()
+				if ( ! ec ) {
+					ec = "Archiving of job failed: unknown reason"
+				} else {
+					ec = "Archiving of job failed: "+ec
+				}
+				addLog(ec)
+				throw new Exception(ec)
 			} else {
-				ec = "Archiving of job failed: "+ec
+				addLog("Archiving of job finished. Archive url: "+archiveUrl)
 			}
-			addLog(ec)
-			throw new Exception(ec)
-		} else {
-			addLog("Archiving of job finished.")
 		}
 	}
 
@@ -64,82 +68,74 @@ class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListene
 	@Override
 	protected void check() {
 
+		for ( JobObject job : jobs ) {
+			addLog ('Checking job: '+job.getJobname())
+			addLog ('Checking whether all input files are listed in stdout...')
+			for ( file in ifiles.keySet() ) {
 
-		addLog ('Checking whether all input files are listed in stdout...')
-		for ( file in ifiles.keySet() ) {
+				addLog("Checking filesize for file: "+file)
+				def filename = FileManager.getFilename(file)
+				long newSize = fm.getFileSize(job.getJobDirectoryUrl()+"/"+filename)
+				if ( newSize != ifiles.get(file)) {
+					throw new Exception("Filesize differs for source/jobinput file: "+filename)
+				} else {
+					addLog("Filesizes match.")
+				}
+			}
 
-			addLog("Checking filesize for file: "+file)
-			def filename = FileManager.getFilename(file)
-			long newSize = fm.getFileSize(job.getJobDirectoryUrl()+"/"+filename)
-			if ( newSize != ifiles.get(file)) {
-				throw new Exception("Filesize differs for source/jobinput file: "+filename)
+			addLog ("All files exist, test successful so far.")
+			success = true
+		}
+		addLog("Checking whether old jobdirs are deleted...")
+		jobdirs.each{ dir ->
+
+			addLog("Checking whether jobdir still exists: "+dir)
+			if ( fm.fileExists(dir) ) {
+				failedTests.add(dir)
+				addLog("Job dir still exists: "+dir)
 			} else {
-				addLog("Filesizes match.")
+				addLog("Job dir deleted.")
 			}
 		}
 
-		addLog ("All files exist, test successful.")
-		success = true
+		if ( failedTests ) {
+			success = false
+			addLog("Test not successful, jobdirectories left:")
+			addLog("\t"+failedTests.join(" ,"))
+		} else {
+			success = true
+			addLog("No jobdirectories left. Test successful.")
+		}
 	}
 
 	@Override
 	protected void tearDown() {
 
-		try {
-			addLog("Killing job, just in case...")
-			si.kill(this.jobname, true)
-			addLog("Killing job finished.")
-		} catch (NoSuchJobException e) {
-			addLog("Killing job not necessary.")
-		}
-		addLog("Deleting archived jobdir: "+archiveUrl)
-		try {
-			fm.deleteFile(archiveUrl)
-			addLog("Deleting archived jobdir finished.")
-		} catch (all) {
-			addLog("Deleting archived jobdir failed: "+all.getLocalizedMessage())
-		}
+		killAllJobs()
 
-		job.removePropertyChangeListener(this)
+		for ( String url : archiveUrls ) {
+
+			addLog("Deleting: "+url)
+			try {
+				fm.deleteFile(url)
+				addLog("Deleted: "+url)
+			} catch (all) {
+				addLog("Could not delete "+url+": "+all.getLocalizedMessage())
+			}
+		}
 	}
 
 	@Override
 	protected void setup() {
-		try {
-			addLog("Trying to kill possibly existing job "+jobname)
-			si.kill(this.jobname, true)
-		} catch (NoSuchJobException e) {
+
+		prepareAndSubmitAllJobs(true)
+
+		jobs.each { job ->
+			String jobdir = job.getJobDirectoryUrl()
+			jobdirs.add(jobdir)
+			addLog("Adding jobdir: "+jobdir)
 		}
 
-		job.addPropertyChangeListener(this)
-
-		job.setJobname(this.jobname)
-
-		job.setApplication(application)
-		job.setCommandline('ls -la')
-
-		for ( def inputfile : inputfiles) {
-			job.addInputFileUrl(inputfile)
-			long size = fm.getFileSize(inputfile)
-			ifiles.put(inputfile, size)
-		}
-
-		job.setWalltimeInSeconds(walltime)
-		addLog("Creating job...")
-		job.createJob(group)
-
-		addLog("Submitting job...")
-		job.submitJob(true)
-
-		addLog ('Waiting for job to finish...')
-		job.waitForJobToFinish(5)
-		addLog ('Job finished.')
-	}
-
-	void propertyChange(PropertyChangeEvent e) {
-
-		if (!e.getPropertyName().equals("submissionLog") && !e.getPropertyName().equals("status") ) {
-			addLog("Submission property "+e.getPropertyName()+" changed from "+e.getOldValue()+" to "+e.getNewValue())
-		}
+		addLog("All jobdirectories added.")
 	}
 }

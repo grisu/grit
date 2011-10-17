@@ -7,7 +7,33 @@ import grisu.model.GrisuRegistryManager
 
 class CopyTest extends AbstractTest implements Test {
 
+	public static setupTestRun(List<ServiceInterface> sis, Map config) {
 
+		def targetDir = config.get("targetDir")
+
+		deleteTargetDir(sis, targetDir)
+	}
+
+	private static deleteTargetDir(List<ServiceInterface> sis, String targetDir) {
+		for ( si in sis ) {
+			FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
+			try {
+				addLog ("Delete target dir...")
+				fm.deleteFile(targetDir)
+			} catch(all) {
+			}
+
+			addLog("Create target dir...")
+			si.mkdir(targetDir)
+		}
+	}
+
+	public static teardownTestRun(List<ServiceInterface> sis, Map config) {
+
+		def targetDir = config.get("targetDir")
+
+		deleteTargetDir(sis, targetDir)
+	}
 
 	final FileManager fm
 

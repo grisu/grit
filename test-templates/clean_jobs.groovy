@@ -3,7 +3,7 @@ import grisu.tests.testRuns.*
 
 cleanJobs {
 
-	testrun = CleanJobsTestRun
+	test = CleanJobsTest
 
 	disable = false
 	
