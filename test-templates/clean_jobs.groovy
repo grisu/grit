@@ -1,10 +1,13 @@
 import grisu.jcommons.constants.Constants
 import grisu.tests.testRuns.*
 
+// the name of this testrun
 cleanJobs {
 
+	// the class of test to run
 	test = CleanJobsTest
 
+	// whether to disable this test
 	disable = false
 	
 	// the number of batches (i.e. serviceinterfaces/sessions)
@@ -12,15 +15,15 @@ cleanJobs {
 	// the number of parallel test executions
 	runs = 1
 
-	// whether to kill the jobs seperately or use the "multiple-kill-jobs"-method "killJobs()
+	// whether to kill the jobs seperately or use the "multiple-kill-jobs"-method "killJobs() (optional, default: true)
 	kill_jobs_seperately = false
 	
 	// whether to wait for all jobs to be finished before start killing them...
 	wait_for_jobs_to_finish = false
 	// the group to use to submit the jobs
 	group = '/nz/nesi'
-	// the amount of jobs to submit in serial
-	amount_jobs = 10
+	// the amount of jobs to submit per run
+	repetitions = 10
 	// how many jobs to submit concurrently (mostly so that test execution is quicker -- might fail in setup-phase already though)
 	concurrent_submissions = 10
 	// the application package name for the job
@@ -34,7 +37,7 @@ cleanJobs {
 
 	// a list of input files
 	inputfiles = [
-	//		'gsiftp://df.auckland.ac.nz/BeSTGRID/home/markus.binsteiner2/simpleTestFile.txt'
+			'gsiftp://df.auckland.ac.nz/BeSTGRID/home/markus.binsteiner2/simpleTestFile.txt'
 	]
 
 }

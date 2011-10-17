@@ -2,69 +2,68 @@ package grisu.tests.tests
 
 import grisu.control.ServiceInterface
 import grisu.model.FileManager
-import grisu.model.GrisuRegistryManager
 
 class DownloadTest extends AbstractTest implements Test {
 
+	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
 
+		def url = config.get("sourceUrl")
+		addRunLog("Getting filesize of source file: "+url)
+		filesize = sis.get(0).getFileSize(url)
+		addRunLog("Filesize: "+filesize)
+	}
 
-	final static String DEFAULT_FILE = 'test0.txt'
-
-	final FileManager fm
-
-	final String source
-	long filesize
+	public String sourceUrl
+	private static long filesize
 
 	private File file
 
-	private final int rep
+	private long resultSize = -1L
 
-	long resultSize = -1L
+	private Map successMap = [:]
 
-
-	public DownloadTest(ServiceInterface si, int batch, int id, String source, int r) {
-		super(si, batch, id)
-		this.fm = GrisuRegistryManager.getDefault(si).getFileManager()
-
-		this.source = source
-		this.rep = r
-	}
 
 	protected void check() {
 
-		addLog("Getting filesize for local file "+this.file.toString())
-		resultSize = fm.getFileSize(this.file.getAbsolutePath())
-		addLog("Filesize for file "+this.file.toString()+": "+resultSize)
+		success = true
+		for ( def s : successMap.values() ) {
+			if ( ! s) {
+				success = false
+				break;
+			}
+		}
 
-		success = (resultSize == filesize)
-		if (success) {
-			addLog("Test successful")
+		if ( success ) {
+			addLog("Success: all downloads successful.")
 		} else {
-			addLog("Test failed, filesizes differ")
+			addLog("Test failed: at least one download didn't succeed.")
 		}
 	}
 
 	protected void execute() {
-		for ( int i=1; i<=this.rep; i++ ) {
+		for ( int i=1; i<=this.repetitions; i++ ) {
 			addLog ("Downloading file... ("+i+". time)")
-			this.file = fm.downloadFile(source, true)
+			this.file = fm.downloadFile(sourceUrl, true)
 
-			addLog ("Checking whether local file exists...")
-			if ( ! this.file.exists() ) {
-				addLog("Error: Local file doesn't exits.")
-				throw new Exception("Local file doesn't exist.")
+			addLog("Getting filesize for local file "+this.file.toString())
+			resultSize = fm.getFileSize(this.file.getAbsolutePath())
+			addLog("Filesize for file "+this.file.toString()+": "+resultSize)
+			boolean s = (resultSize == filesize)
+			successMap[i] = s
+			if ( s ) {
+				addLog("Success: local file exists and has got right filesize")
+			} else {
+				addLog("Error: local file has got wrong filesize")
 			}
-			addLog("Success: Local file exists.")
-
-			addLog ("Download finished.")
+			addLog("Deleting local file...")
+			this.file.delete()
+			addLog("File deleted.")
+			addLog ("Download finished ("+i+".time)")
 		}
 	}
 
 
 	protected void setup() {
-		addLog("Getting filesize of source file "+source)
-		this.filesize = fm.getFileSize(source)
-		addLog("Filesize: "+this.filesize)
 	}
 
 	protected void tearDown() {

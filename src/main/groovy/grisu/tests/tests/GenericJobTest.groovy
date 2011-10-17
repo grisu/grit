@@ -3,12 +3,9 @@ package grisu.tests.tests
 import grisu.control.JobConstants
 import grisu.control.ServiceInterface
 import grisu.frontend.model.job.JobObject
-import grisu.model.FileManager
 
 import java.beans.PropertyChangeEvent
-import java.beans.PropertyChangeListener
 
-import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 
 /**
@@ -16,7 +13,7 @@ import com.google.common.collect.Maps
  * @author Markus Binsteiner
  *
  */
-class GenericJobTest extends AbstractTest implements Test, PropertyChangeListener {
+class GenericJobTest extends AbstractTest implements Test {
 
 	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
 
@@ -30,23 +27,8 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 	}
 
 
-	List jobs = Collections.synchronizedList(Lists.newLinkedList())
-
-	public  String jobname_prefix
-
-	public int amount_jobs
-	public String group
-	public String application
-	public String commandline
-	public String queue
-	public List inputfiles
-
 	public boolean wait_for_job_to_finish_before_next_job_submit
 	public boolean require_job_success
-
-	public int walltime
-
-	final FileManager fm
 
 
 	@Override
@@ -105,7 +87,7 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 
 		Map exceptions = Collections.synchronizedMap(Maps.newHashMap())
 
-		for ( final int i=1; i<=amount_jobs; i++ ) {
+		for ( final int i=1; i<=repetitions; i++ ) {
 
 
 			try {
@@ -137,13 +119,6 @@ class GenericJobTest extends AbstractTest implements Test, PropertyChangeListene
 				addLog("\t"+name+": "+e.getLocalizedMessage())
 				throw new Exception("Not all jobs could be created succesfully...")
 			}
-		}
-	}
-
-	void propertyChange(PropertyChangeEvent e) {
-
-		if (!e.getPropertyName().equals("submissionLog") && !e.getPropertyName().equals("status") ) {
-			addLog("Submission property "+e.getPropertyName()+" changed to "+e.getNewValue())
 		}
 	}
 }

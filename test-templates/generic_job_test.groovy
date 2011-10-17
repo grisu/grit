@@ -2,10 +2,13 @@ import grisu.jcommons.constants.Constants
 import grisu.tests.testRuns.*
 import grisu.tests.tests.GenericJobTest;
 
+// the name of the testrun
 genericJob {
 
+	// the class of test to run
 	test = GenericJobTest
 
+	// whether to disable this test
 	disable = false
 	
 	// the number of batches (i.e. serviceinterfaces/sessions)
@@ -18,7 +21,7 @@ genericJob {
 	// the group to use to submit the jobs
 	group = '/nz/nesi'
 	// the amount of jobs to submit in serial
-	amount_jobs = 10
+	repetitions = 10
 	// the application package name for the job
 	application = "UnixCommands"
 	// the commandline

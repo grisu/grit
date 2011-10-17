@@ -73,7 +73,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 	public jobname_prefix = DEFAULT_TEST_JOB_NAME
 
-	public int amount_jobs = 1
+	public int repetitions = 1
 	public String group = "/nz/nesi"
 	public String application = "UnixCommands"
 	public String commandline = "echo hello world"
@@ -92,6 +92,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		if (! prefix) {
 			prefix = DEFAULT_TEST_JOB_NAME
 		}
+		killAllJobsWithPrefix(sis, prefix)
 	}
 
 	public static void killAllJobsWithPrefix(List<ServiceInterface> sis, String prefix) {
@@ -102,7 +103,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 	public static void killAllJobsWithPrefix(ServiceInterface si, String prefix) {
 
-		addRunLog("Killing potentially existing jobs...")
+		addRunLog("Checking whether there are jobs to kill...")
 
 
 		def toKill = []
@@ -113,6 +114,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		}
 
 		if ( toKill) {
+			addRunLog("Killing "+toKill.size()+" jobs...")
 			String handle = si.killJobs(DtoStringList.fromStringColletion(toKill), true)
 			addRunLog("Waiting for killing of jobs...")
 			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false, false)
@@ -123,6 +125,8 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 			} else {
 				addRunLog("Jobs killed succesfully.")
 			}
+		} else {
+			addRunLog("No jobs to be killed...")
 		}
 	}
 
@@ -184,7 +188,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	 */
 	protected void prepareAllJobs() {
 
-		for ( int index=0; index<amount_jobs; index++ ) {
+		for ( int index=0; index<repetitions; index++ ) {
 
 			prepareNewJob(this.jobname_prefix+"_"+batchId+"_"+parallelId+"_j"+index)
 		}
@@ -404,6 +408,12 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 	void checkTest() {
 		myLogger.debug("Checking test: "+batch+" / "+parallel)
+
+		if (setupException || exception ) {
+			myLogger.debug("Not checking test: "+batch+" /"+parallel)
+			addLog("Not checking test since setup or execution exception exist...")
+			return
+		}
 
 		if (!success) {
 			myLogger.debug("Not checking test: "+batch+" /"+parallel)

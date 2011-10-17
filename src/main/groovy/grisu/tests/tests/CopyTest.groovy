@@ -10,21 +10,23 @@ class CopyTest extends AbstractTest implements Test {
 	public static setupTestRun(List<ServiceInterface> sis, Map config) {
 
 		def targetDir = config.get("targetDir")
-
 		deleteTargetDir(sis, targetDir)
+
+		addRunLog("Getting filesize to test against after test execution...")
+		def sourceUrl = config.get("sourceUrl")
+		filesize = sis.get(0).getFileSize(sourceUrl)
+		addRunLog("Filesize of "+sourceUrl+": "+filesize)
+		filename = FileAndUrlHelpers.getFilename(sourceUrl)
 	}
 
 	private static deleteTargetDir(List<ServiceInterface> sis, String targetDir) {
 		for ( si in sis ) {
 			FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
 			try {
-				addLog ("Delete target dir...")
+				addRunLog ("Delete target dir: "+targetDir)
 				fm.deleteFile(targetDir)
 			} catch(all) {
 			}
-
-			addLog("Create target dir...")
-			si.mkdir(targetDir)
 		}
 	}
 
@@ -35,32 +37,17 @@ class CopyTest extends AbstractTest implements Test {
 		deleteTargetDir(sis, targetDir)
 	}
 
-	final FileManager fm
+	public String sourceUrl
+	private static String filename
+	private static long filesize
+	public String targetDir
+	private String testTargetDir
+	private String remoteFile
 
-	final String source
-	final String filename
-	long filesize
-	final String target
-	final String remoteDir
-	final String remoteFile
+	public int repetitions = 1
 
-	final int repeats
+	private long resultSize = -1L
 
-	long resultSize = -1L
-
-
-	public CopyTest(ServiceInterface si, int batch, int id, String source, String target, int repeats) {
-		super(si, batch, id)
-		this.fm = GrisuRegistryManager.getDefault(si).getFileManager()
-		this.target = target
-
-		this.source = source
-		this.filename = FileAndUrlHelpers.getFilename(source)
-		this.remoteDir = target+"/"+id
-		this.remoteFile = remoteDir + "/"+filename
-
-		this.repeats = repeats
-	}
 
 	protected void check() {
 
@@ -78,25 +65,19 @@ class CopyTest extends AbstractTest implements Test {
 
 	protected void execute() {
 
-		for ( i in 1..repeats ) {
+		for ( i in 1..repetitions ) {
 
-			addLog ("Copying file...")
-			fm.cp(source, remoteDir, true)
-			addLog ("Copying finished.")
+			addLog ("Copying file... ("+i+". time)")
+			fm.cp(sourceUrl, testTargetDir, true)
+			addLog ("Copying finished ("+i+". time)")
 		}
 	}
 
 
 	protected void setup() {
 
-		try {
-			addLog("Deleting potentially existing target file...")
-			fm.deleteFile(remoteFile)
-			addLog("Target file deleted.")
-		} catch (all) {
-			// that's ok
-		}
-		this.filesize = fm.getFileSize(source)
+		this.testTargetDir = targetDir+"/"+getBatchId()+"/"+getParallelId()
+		this.remoteFile = testTargetDir + "/"+filename
 	}
 
 	protected void tearDown() {
