@@ -2,6 +2,7 @@ package grisu.tests.tests
 
 import grisu.control.ServiceInterface
 import grisu.model.FileManager
+import grisu.model.GrisuRegistryManager
 
 import org.apache.commons.io.FileUtils
 
@@ -27,11 +28,12 @@ class DownloadJobTest extends AbstractTest implements Test {
 		List files = config.get("inputfiles")
 
 		ServiceInterface si = sis[0]
+		FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
 
 		addRunLog("Getting filesizes of input files...")
 		for ( def tmp : files ) {
 			def file = FileManager.getFilename(tmp)
-			long size = si.getFileSize(tmp)
+			long size = fm.getFileSize(tmp)
 			ifiles[file] = size
 			addRunLog("Filesize for "+file+": "+size)
 		}
