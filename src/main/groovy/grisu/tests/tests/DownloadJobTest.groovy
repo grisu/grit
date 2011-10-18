@@ -39,7 +39,7 @@ class DownloadJobTest extends AbstractTest implements Test {
 
 	public static void teardownTestRun(List<ServiceInterface> sis, Map config) {
 
-		killAllJobsWithPrefix(sis, config.get("jobname_prefix"))
+		killAllJobsWithPrefix(sis, config)
 
 		FileUtils.deleteDirectory(downloadDir)
 	}
@@ -105,6 +105,7 @@ class DownloadJobTest extends AbstractTest implements Test {
 
 	@Override
 	protected void setup() {
+
 
 		prepareAndSubmitAllJobs(true)
 	}

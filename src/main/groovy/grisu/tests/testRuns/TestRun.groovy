@@ -41,6 +41,17 @@ class TestRun {
 	public int runs = 1
 	public int batches = 1
 
+	public boolean skip_setup = false
+	public boolean skip_teardown = false
+
+	public setSkipSetup(boolean skip) {
+		this.skip_setup = skip
+	}
+
+	public setSkipTearDown(boolean skip) {
+		this.skip_teardown = skip
+	}
+
 	public void setBatches(int b) {
 		this.batches = b
 	}
@@ -176,7 +187,9 @@ class TestRun {
 	public void waitForCleanUp() {
 
 		executionThread.join()
-		cleanupThread.join()
+		if ( cleanupThread != null ) {
+			cleanupThread.join()
+		}
 	}
 
 	/**
@@ -198,18 +211,22 @@ class TestRun {
 
 	private void kickOffExecution() {
 
-		myLogger.debug("Setting up testrun...")
-		setup()
+
+		if (!skip_setup) {
+			myLogger.debug("Setting up testrun...")
+			setup()
+			myLogger.debug("Setting of tests...")
+			addLog "Setting up tests..."
+			tests.each{ t ->
+				t.setupTest()
+			}
+			addLog "Setup of tests finished"
+		} else {
+			addLog("Skipping setting up testrun.")
+		}
 
 		int poolsize = runs * batches
 		ExecutorService executor = Executors.newFixedThreadPool(poolsize)
-
-		myLogger.debug("Setting of tests...")
-		addLog "Setting up tests..."
-		tests.each{ t ->
-			t.setupTest()
-		}
-		addLog "Setup of tests finished"
 
 		myLogger.debug("Starting tests...")
 		def execute = { t ->
@@ -232,14 +249,18 @@ class TestRun {
 		}
 		addLog "Checking of tests finished."
 
-		myLogger.debug("Starting checking cleanup...")
-		cleanupThread = new Thread() {
-					public void run() {
-						cleanUp()
+		if (!skip_teardown) {
+			myLogger.debug("Starting checking cleanup...")
+			cleanupThread = new Thread() {
+						public void run() {
+							cleanUp()
+						}
 					}
-				}
 
-		cleanupThread.start()
+			cleanupThread.start()
+		} else {
+			addLog("Skipping tearing down test.")
+		}
 	}
 
 	private void cleanUp() {

@@ -36,6 +36,10 @@ class TestRunFactory {
 			configMap.remove("batches")
 			def runs = configMap.get("runs")
 			configMap.remove("runs")
+			def skipSetup = configMap.get("skip_setup")
+			configMap.remove("skip_setup")
+			def skipTearDown = configMap.get("skip_teardown")
+			configMap.remove("skip_teardown")
 
 			TestRun tr = new TestRun()
 			tr.setName(name)
@@ -45,6 +49,12 @@ class TestRunFactory {
 			}
 			if (runs) {
 				tr.setRuns(runs)
+			}
+			if (skipSetup) {
+				tr.setSkipSetup(skipSetup)
+			}
+			if (skipTearDown) {
+				tr.setSkipTearDown(skipTearDown)
 			}
 
 			tr.setConfigMap(configMap)

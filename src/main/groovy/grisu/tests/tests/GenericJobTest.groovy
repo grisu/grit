@@ -95,7 +95,7 @@ class GenericJobTest extends AbstractTest implements Test {
 
 				job.addPropertyChangeListener(this)
 
-				job.setJobname(this.jobname_prefix+"_j"+i)
+				job.setJobname(this.jobname_prefix+"_"+getBatchId()+"_"+getParallelId()+"_j"+i)
 
 				job.setApplication(application)
 				job.setCommandline('ls -la')

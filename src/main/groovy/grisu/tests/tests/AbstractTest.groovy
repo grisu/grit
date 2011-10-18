@@ -50,6 +50,16 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		tr = t
 	}
 
+
+	public static final JOB_CREATION_PARAMETERS = [
+		'group',
+		'application',
+		'commandline',
+		'queue',
+		'inputfiles',
+		'walltime'
+	]
+
 	public ServiceInterface si
 	public FileManager fm
 	private int batch
@@ -84,9 +94,19 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	public int concurrent_submissions = 1
 	public int concurrent_creations = 1
 
+	public boolean reuse_existing_jobs = false
+
+
+
 	public int walltime = 60
 
 	public static void killAllJobsWithPrefix(List<ServiceInterface> sis, Map config) {
+
+		def reuse = config.get("reuse_existing_jobs")
+		if (reuse) {
+			addRunLog("Not killing existing jobs because 'reuse_existing_jobs' flag is set.")
+			return
+		}
 
 		String prefix = config.get("jobname_prefix")
 		if (! prefix) {
@@ -131,7 +151,11 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	}
 
 	public void killAllJobs() {
-		killAllJobsWithPrefix(si, this.jobname_prefix)
+		if ( ! reuse_existing_jobs ) {
+			killAllJobsWithPrefix(si, this.jobname_prefix)
+		} else {
+			addLog("Not killing existing jobs because 'reuse_existing_jobs' flag is set.")
+		}
 	}
 
 	protected JobObject prepareNewJob(String jobname) {
@@ -199,40 +223,53 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	 */
 	protected void prepareAndSubmitAllJobs(boolean wait) {
 
-		prepareAllJobs()
+		if ( reuse_existing_jobs ) {
 
-		def pool = Executors.newFixedThreadPool(concurrent_submissions)
+			for (def jobname in si.getAllJobnames(null).asSortedSet()) {
+				if (jobname.startsWith(jobname_prefix+"_"+getBatchId()+"_"+getParallelId())) {
+					addLog("Found existing job: "+jobname+". Adding it to this testrun...")
+					JobObject job = new JobObject(si, jobname)
+					jobs.add(job)
+					jobnames.add(job.getJobname())
+				}
+			}
+		} else {
 
-		Map exceptions = Collections.synchronizedMap(Maps.newHashMap())
+			prepareAllJobs()
 
-		for ( final JobObject tmp : jobs ) {
+			def pool = Executors.newFixedThreadPool(concurrent_submissions)
 
-			final JobObject job = tmp
+			Map exceptions = Collections.synchronizedMap(Maps.newHashMap())
 
-			Thread t= new Thread() {
-						public void run() {
+			for ( final JobObject tmp : jobs ) {
 
-							try {
-								createJobOnBackend(job)
-								submitJob(job)
-							} catch (all) {
-								addLog("Error creating "+job.getJobname()+": "+all.getLocalizedMessage())
-								exceptions.put(job.getJobname(), all)
-								pool.shutdownNow()
+				final JobObject job = tmp
+
+				Thread t= new Thread() {
+							public void run() {
+
+								try {
+									createJobOnBackend(job)
+									submitJob(job)
+								} catch (all) {
+									addLog("Error creating "+job.getJobname()+": "+all.getLocalizedMessage())
+									exceptions.put(job.getJobname(), all)
+									pool.shutdownNow()
+								}
 							}
 						}
-					}
-			pool.execute(t);
-		}
+				pool.execute(t);
+			}
 
-		pool.shutdown();
-		pool.awaitTermination(10, TimeUnit.HOURS)
+			pool.shutdown();
+			pool.awaitTermination(10, TimeUnit.HOURS)
 
-		if ( exceptions ) {
-			addLog ("At least one job creation/submission failed: ")
-			exceptions.each{ name, e ->
-				addLog("\t"+name+": "+e.getLocalizedMessage())
-				throw new Exception("Not all jobs could be created/submitted succesfully...")
+			if ( exceptions ) {
+				addLog ("At least one job creation/submission failed: ")
+				exceptions.each{ name, e ->
+					addLog("\t"+name+": "+e.getLocalizedMessage())
+					throw new Exception("Not all jobs could be created/submitted succesfully...")
+				}
 			}
 		}
 

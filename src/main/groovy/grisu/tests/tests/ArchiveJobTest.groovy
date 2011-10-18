@@ -9,6 +9,12 @@ import java.beans.PropertyChangeListener
 
 import com.google.common.collect.Lists
 
+@TestDocumentation(
+description = 'This test archives a bunch of jobs and waits for the archiving task to be finished before archiving the next job within a run',
+setupDescription = 'Creates the jobs according to the values specified in the config and keeps a list of all jobdirectories.',
+tearDownDescription = 'Kills all jobs (just to be sure) and then deletes all archive directories.',
+supportedParameters = []
+)
 class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListener {
 
 
