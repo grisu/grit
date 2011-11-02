@@ -29,7 +29,7 @@ cleanJobs {
 	// the application package name for the job
 	application = "UnixCommands"
 	// the commandline
-	commandline = "ls -lah"
+	commandline = "sh createFiles.sh 10 10 test0.txt"
 	// the walltime of the job
 	walltime = 60
 	// the queue to use to submit to

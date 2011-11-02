@@ -2,7 +2,11 @@ package grisu.tests
 
 import grisu.frontend.control.login.LoginManager
 import grisu.frontend.view.cli.CliHelpers
+import grisu.jcommons.dependencies.BouncyCastleTool
+import grisu.jcommons.utils.Version
 import grisu.tests.testRuns.TestRunFactory
+
+import org.slf4j.MDC
 
 public class TestStarter {
 
@@ -38,6 +42,14 @@ public class TestStarter {
 
 
 	static void main(args) {
+
+		BouncyCastleTool.initBouncyCastle();
+
+		MDC.put("session",
+				System.getProperty("user.name") + "_" + new Date().getTime());
+
+		// MDC.put("local_user", System.getProperty("user.name"));
+		MDC.put("grit-version", Version.get("grit"));
 
 
 		CliHelpers.enableProgressDisplay(false)

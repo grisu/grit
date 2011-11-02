@@ -1,0 +1,8 @@
+Package: grit
+Version: VERSION_TOKEN
+Section: misc
+Priority: optional
+Architecture: all
+Depends: sun-java6-jdk,libbcprov-java
+Maintainer: Markus Binsteiner <m.binsteiner@auckland.ac.nz>
+Description: Gri(d/su) testing package
