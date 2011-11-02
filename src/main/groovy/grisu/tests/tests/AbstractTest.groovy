@@ -137,7 +137,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 			addRunLog("Killing "+toKill.size()+" jobs...")
 			String handle = si.killJobs(DtoStringList.fromStringColletion(toKill), true)
 			addRunLog("Waiting for killing of jobs...")
-			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false, false)
+			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false)
 			addRunLog("Killing of jobs finished.")
 			if ( so.getStatus().isFailed() ) {
 				addRunLog("Error when trying to kill jobs: "+so.getStatus().getErrorCause())
