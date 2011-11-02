@@ -58,8 +58,8 @@
 		<url>http://github.com/grisu/grit/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Hudson</system>
-		<url>https://code.ceres.auckland.ac.nz/hudson/job/Grisu-SNAPSHOT</url>
+		<system>Jenkins</system>
+		<url>https://code.ceres.auckland.ac.nz/jenkins/job/Grit-SNAPSHOT/</url>
 	</ciManagement>
 	<developers>
 		<developer>
