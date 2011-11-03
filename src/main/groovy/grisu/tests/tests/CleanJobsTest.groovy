@@ -69,7 +69,7 @@ class CleanJobsTest extends AbstractTest implements Test {
 			addLog("Killing all jobs...")
 			String handle = si.killJobs(list, true)
 			addLog("Waiting for killing of jobs to finish...")
-			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false, false)
+			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false)
 			addLog("Killing of jobs finished.")
 
 			if ( so.getStatus().isFailed() ) {
