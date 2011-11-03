@@ -3,8 +3,7 @@ package grisu.tests.tests
 import grisu.control.JobConstants
 import grisu.control.ServiceInterface
 import grisu.frontend.model.job.JobObject
-
-import java.beans.PropertyChangeEvent
+import grisu.tests.testRuns.TestRun
 
 import com.google.common.collect.Maps
 
@@ -15,15 +14,15 @@ import com.google.common.collect.Maps
  */
 class GenericJobTest extends AbstractTest implements Test {
 
-	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
+	public static void setupTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(sis, config.get("jobname_prefix"))
+		killAllJobsWithPrefix(tr, config.get("jobname_prefix"))
 	}
 
 
-	public static void teardownTestRun(List<ServiceInterface> sis, Map config) {
+	public static void teardownTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(sis, config.get("jobname_prefix"))
+		killAllJobsWithPrefix(tr, config.get("jobname_prefix"))
 	}
 
 

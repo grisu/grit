@@ -4,6 +4,7 @@ import grisu.control.ServiceInterface
 import grisu.model.FileManager
 import grisu.model.dto.DtoStringList
 import grisu.model.status.StatusObject
+import grisu.tests.testRuns.TestRun
 
 import com.google.common.collect.Lists
 
@@ -21,15 +22,15 @@ class CleanJobsTest extends AbstractTest implements Test {
 	protected List jobdirs = Collections.synchronizedList(Lists.newArrayList())
 
 
-	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
+	public static void setupTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(sis, config)
+		killAllJobsWithPrefix(tr, config)
 	}
 
 
-	public static void teardownTestRun(List<ServiceInterface> sis, Map config) {
+	public static void teardownTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(sis, config)
+		killAllJobsWithPrefix(tr, config)
 	}
 
 

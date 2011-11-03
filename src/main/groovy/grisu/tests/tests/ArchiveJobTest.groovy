@@ -4,6 +4,7 @@ import grisu.control.ServiceInterface
 import grisu.frontend.model.job.JobObject
 import grisu.model.FileManager
 import grisu.model.status.StatusObject
+import grisu.tests.testRuns.TestRun
 
 import java.beans.PropertyChangeListener
 
@@ -24,20 +25,20 @@ class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListene
 
 	private final static Map ifiles = [:]
 
-	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
+	public static void setupTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(sis, config)
+		killAllJobsWithPrefix(tr)
 
 		List files = config.get("inputfiles")
 
-		ServiceInterface si = sis[0]
+		ServiceInterface si = tr.getServiceInterfaces()[0]
 
-		addRunLog("Getting filesizes of input files...")
+		tr.addRunLog("Getting filesizes of input files...")
 		for ( def tmp : files ) {
 			def file = FileManager.getFilename(tmp)
 			long size = si.getFileSize(tmp)
 			ifiles[file] = size
-			addRunLog("Filesize for "+file+": "+size)
+			tr.addRunLog("Filesize for "+file+": "+size)
 		}
 	}
 

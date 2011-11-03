@@ -3,39 +3,40 @@ package grisu.tests.tests
 import grisu.control.ServiceInterface
 import grisu.model.FileManager
 import grisu.model.GrisuRegistryManager
+import grisu.tests.testRuns.TestRun
 
 class UploadTest extends AbstractTest implements Test {
 
-	public static setupTestRun(List<ServiceInterface> sis, Map config) {
+	public static setupTestRun(TestRun tr, Map config) {
 
 		def targetDir = config.get("targetDir")
 
-		deleteTargetDir(sis, targetDir)
+		deleteTargetDir(tr, targetDir)
 		filename = FileManager.getFilename(config.get("sourceFile"))
-		addRunLog("Getting filesize of sourcefile...")
+		tr.addRunLog("Getting filesize of sourcefile...")
 		filesize = new File(config.get("sourceFile")).length()
-		addRunLog("Filesize: "+filesize)
+		tr.addRunLog("Filesize: "+filesize)
 	}
 
-	private static deleteTargetDir(List<ServiceInterface> sis, String targetDir) {
-		for ( si in sis ) {
+	private static deleteTargetDir(TestRun tr, String targetDir) {
+		for ( si in tr.getServiceInterfaces() ) {
 			FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
 			try {
-				addRunLog ("Delete target dir...")
+				tr.addRunLog ("Delete target dir...")
 				fm.deleteFile(targetDir)
 			} catch(all) {
 			}
 
-			addRunLog("Create target dir...")
+			tr.addRunLog("Create target dir...")
 			si.mkdir(targetDir)
 		}
 	}
 
-	public static teardownTestRun(List<ServiceInterface> sis, Map config) {
+	public static teardownTestRun(TestRun tr, Map config) {
 
 		def targetDir = config.get("targetDir")
 
-		deleteTargetDir(sis, targetDir)
+		deleteTargetDir(tr, targetDir)
 	}
 
 

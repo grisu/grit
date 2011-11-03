@@ -3,6 +3,7 @@ package grisu.tests.tests
 import grisu.control.ServiceInterface
 import grisu.model.FileManager
 import grisu.model.GrisuRegistryManager
+import grisu.tests.testRuns.TestRun
 
 import org.apache.commons.io.FileUtils
 
@@ -19,29 +20,29 @@ class DownloadJobTest extends AbstractTest implements Test {
 	private final static Map ifiles = [:]
 	private final List failures = []
 
-	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
+	public static void setupTestRun(TestRun tr, Map config) {
 
 		FileUtils.deleteDirectory(downloadDir)
 
-		killAllJobsWithPrefix(sis, config)
+		killAllJobsWithPrefix(tr, config)
 
 		List files = config.get("inputfiles")
 
-		ServiceInterface si = sis[0]
+		ServiceInterface si = tr.getServiceInterfaces()[0]
 		FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
 
-		addRunLog("Getting filesizes of input files...")
+		tr.addRunLog("Getting filesizes of input files...")
 		for ( def tmp : files ) {
 			def file = FileManager.getFilename(tmp)
 			long size = fm.getFileSize(tmp)
 			ifiles[file] = size
-			addRunLog("Filesize for "+file+": "+size)
+			tr.addRunLog("Filesize for "+file+": "+size)
 		}
 	}
 
-	public static void teardownTestRun(List<ServiceInterface> sis, Map config) {
+	public static void teardownTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(sis, config)
+		killAllJobsWithPrefix(tr, config)
 
 		FileUtils.deleteDirectory(downloadDir)
 	}

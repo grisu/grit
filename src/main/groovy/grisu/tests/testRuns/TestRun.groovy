@@ -1,6 +1,9 @@
 package grisu.tests.testRuns
 
 import grisu.control.ServiceInterface
+import grisu.tests.log.StdOutTestLogger
+import grisu.tests.log.TestLogger
+import grisu.tests.tests.AbstractTest
 import grisu.tests.tests.Test
 
 import java.lang.reflect.Method
@@ -12,7 +15,6 @@ import java.util.concurrent.TimeUnit
 import org.apache.log4j.Logger
 
 import com.google.common.collect.Lists
-import com.google.common.collect.Maps
 
 
 
@@ -33,8 +35,6 @@ import com.google.common.collect.Maps
  */
 class TestRun {
 
-	final log = Maps.newTreeMap()
-
 	Logger myLogger = Logger.getLogger(TestRun.class.getName())
 
 	public List serviceInterfaces
@@ -43,6 +43,24 @@ class TestRun {
 
 	public boolean skip_setup = false
 	public boolean skip_teardown = false
+
+	def testLoggers = [new StdOutTestLogger()]
+
+	public void setTestLoggers(List loggers) {
+		this.testLoggers = loggers
+	}
+
+	public void setTestLogger(TestLogger l) {
+		this.testLoggers = [l]
+	}
+
+	public void addTestLogger(TestLogger l) {
+		testLoggers.add(l)
+	}
+
+	public void removeTestLogger(TestLogger l) {
+		testLoggers.remove(l)
+	}
 
 	public setSkipSetup(boolean skip) {
 		this.skip_setup = skip
@@ -75,6 +93,10 @@ class TestRun {
 	public TestRun() {
 	}
 
+	public List getServiceInterfaces() {
+		return serviceInterfaces
+	}
+
 	public void setName(String name) {
 		this.name = name
 	}
@@ -87,17 +109,18 @@ class TestRun {
 		this.testClass = testClass
 	}
 
-	public synchronized void addLog(String msg) {
+	public void addTestLog(AbstractTest test, String msg) {
 
-		printMessage(msg)
-
-		long time = new Date().getTime()
-
-		while (log[time]) {
-			time++
+		testLoggers.each {
+			it.addTestLogMessage(test, msg)
 		}
+	}
 
-		log[time] = msg
+	public void addRunLog(String msg) {
+
+		testLoggers.each {
+			it.addTestRunLogMessage(this, msg)
+		}
 	}
 
 	/**
@@ -118,14 +141,15 @@ class TestRun {
 
 	private void init() {
 
-		Method m = testClass.getMethod("setTestRun", TestRun.class)
-		m.invoke(null, this)
+		//		Method m = testClass.getMethod("setTestRun", TestRun.class)
+		//		m.invoke(null, this)
 
 		for ( b in 1..batches) {
 
 			for ( no in 1..runs ) {
 
 				Test t = getTest(serviceInterfaces.get(b-1), b, no)
+				t.setTestRun(this)
 				tests.add(t)
 			}
 		}
@@ -331,6 +355,14 @@ class TestRun {
 			println ""
 		}
 	}
+
+	public String getName() {
+		return this.name
+	}
+
+	private void addLog(String msg) {
+		addRunLog(msg)
+	}
 	/**
 	 * Setup a TestRun.
 	 *
@@ -339,9 +371,9 @@ class TestRun {
 	public void setup() {
 
 		try {
-			Method m = testClass.getMethod("setupTestRun", List.class, Map.class)
+			Method m = testClass.getMethod("setupTestRun", TestRun.class, Map.class)
 			addLog("Setting up testrun...")
-			m.invoke(null, serviceInterfaces, configMap)
+			m.invoke(null, this, configMap)
 			addLog("Setting up of testrun completed.")
 		} catch (NoSuchMethodException e) {
 			// that's ok
@@ -359,9 +391,9 @@ class TestRun {
 	 */
 	public void tearDown() {
 		try {
-			Method m = testClass.getMethod("teardownTestRun", List.class, Map.class)
+			Method m = testClass.getMethod("teardownTestRun", TestRun.class, Map.class)
 			addLog("Tearing down up testrun...")
-			m.invoke(null, serviceInterfaces, configMap)
+			m.invoke(null, this, configMap)
 			addLog("Teardown of testrun completed.")
 		} catch (NoSuchMethodException e) {
 			// that's ok

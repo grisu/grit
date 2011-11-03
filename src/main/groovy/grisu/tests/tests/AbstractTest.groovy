@@ -26,30 +26,17 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 	Logger myLogger = Logger.getLogger(AbstractTest.class.getName())
 
-	final Map log = Maps.newTreeMap()
-	final static Map runLog = Collections.synchronizedMap(Maps.newTreeMap())
-
-	public static void addRunLog(String msg) {
-
-		long time = new Date().getTime()
-
-		while (runLog[time]) {
-			time++
-		}
-
-		runLog[time] = msg
-
-		if ( tr ) {
-			tr.addLog(msg)
-		}
+	protected void addLog(String msg) {
+		tr.addTestLog(this, msg)
 	}
 
-	private static TestRun tr
-
-	public static setTestRun(TestRun t) {
-		tr = t
+	protected void addRunLog(String msg) {
+		tr.addRunLog(this.msg)
 	}
 
+	public void setTestRun(TestRun tr) {
+		this.tr = tr
+	}
 
 	public static final JOB_CREATION_PARAMETERS = [
 		'group',
@@ -64,6 +51,8 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	public FileManager fm
 	private int batch
 	private int parallel
+
+	private TestRun tr
 
 	protected Date startedTime
 	protected Date finishedTime
@@ -97,14 +86,13 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	public boolean reuse_existing_jobs = false
 
 
-
 	public int walltime = 60
 
-	public static void killAllJobsWithPrefix(List<ServiceInterface> sis, Map config) {
+	public static void killAllJobsWithPrefix(TestRun tr, Map config) {
 
 		def reuse = config.get("reuse_existing_jobs")
 		if (reuse) {
-			addRunLog("Not killing existing jobs because 'reuse_existing_jobs' flag is set.")
+			tr.addRunLog("Not killing existing jobs because 'reuse_existing_jobs' flag is set.")
 			return
 		}
 
@@ -112,18 +100,18 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		if (! prefix) {
 			prefix = DEFAULT_TEST_JOB_NAME
 		}
-		killAllJobsWithPrefix(sis, prefix)
+		killAllJobsWithPrefix(tr, prefix)
 	}
 
-	public static void killAllJobsWithPrefix(List<ServiceInterface> sis, String prefix) {
-		for ( ServiceInterface si : sis ) {
-			killAllJobsWithPrefix(si, prefix)
+	public static void killAllJobsWithPrefix(TestRun tr, String prefix) {
+		for ( ServiceInterface si : tr.getServiceInterfaces() ) {
+			killAllJobsWithPrefixPr(si, tr, prefix)
 		}
 	}
 
-	public static void killAllJobsWithPrefix(ServiceInterface si, String prefix) {
+	private static void killAllJobsWithPrefixPr(ServiceInterface si, TestRun tr, String prefix) {
 
-		addRunLog("Checking whether there are jobs to kill...")
+		tr.addRunLog("Checking whether there are jobs to kill...")
 
 
 		def toKill = []
@@ -134,19 +122,19 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		}
 
 		if ( toKill) {
-			addRunLog("Killing "+toKill.size()+" jobs...")
+			tr.addRunLog("Killing "+toKill.size()+" jobs...")
 			String handle = si.killJobs(DtoStringList.fromStringColletion(toKill), true)
-			addRunLog("Waiting for killing of jobs...")
+			tr.addRunLog("Waiting for killing of jobs...")
 			StatusObject so = StatusObject.waitForActionToFinish(si, handle, 4, false)
-			addRunLog("Killing of jobs finished.")
+			tr.addRunLog("Killing of jobs finished.")
 			if ( so.getStatus().isFailed() ) {
-				addRunLog("Error when trying to kill jobs: "+so.getStatus().getErrorCause())
+				tr.addRunLog("Error when trying to kill jobs: "+so.getStatus().getErrorCause())
 				throw new Exception(so.getStatus().getErrorCause())
 			} else {
-				addRunLog("Jobs killed succesfully.")
+				tr.addRunLog("Jobs killed succesfully.")
 			}
 		} else {
-			addRunLog("No jobs to be killed...")
+			tr.addRunLog("No jobs to be killed...")
 		}
 	}
 
@@ -401,18 +389,11 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		return this.success
 	}
 
-	protected void addLog(String msg) {
-
-		println '  ( '+batch+' / '+parallel+' ): '+msg
-
-		long time = new Date().getTime()
-
-		while (log[time]) {
-			time++
-		}
-
-		log[time] = msg
+	public String getName() {
+		return batch+" / "+parallel;
 	}
+
+
 
 	public void tearDownTest() {
 		myLogger.debug("Tearing down test: "+batch+" / "+parallel)

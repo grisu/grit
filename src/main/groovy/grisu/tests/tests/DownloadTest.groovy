@@ -1,16 +1,16 @@
 package grisu.tests.tests
 
-import grisu.control.ServiceInterface
 import grisu.model.FileManager
+import grisu.tests.testRuns.TestRun
 
 class DownloadTest extends AbstractTest implements Test {
 
-	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
+	public static void setupTestRun(TestRun tr, Map config) {
 
 		def url = config.get("sourceUrl")
-		addRunLog("Getting filesize of source file: "+url)
-		filesize = sis.get(0).getFileSize(url)
-		addRunLog("Filesize: "+filesize)
+		tr.addRunLog("Getting filesize of source file: "+url)
+		filesize = tr.getServiceInterfaces().get(0).getFileSize(url)
+		tr.addRunLog("Filesize: "+filesize)
 	}
 
 	public String sourceUrl

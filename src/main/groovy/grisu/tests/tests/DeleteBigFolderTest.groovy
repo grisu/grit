@@ -1,25 +1,22 @@
 package grisu.tests.tests
 
-import grisu.control.ServiceInterface
-import grisu.frontend.model.job.JobObject
 import grisu.model.FileManager
+import grisu.tests.testRuns.TestRun
 import grisu.tests.util.Input
-
-import java.beans.PropertyChangeEvent
 
 import com.google.common.collect.Lists
 
 class DeleteBigFolderTest extends AbstractTest implements Test {
 
-	public static void setupTestRun(List<ServiceInterface> sis, Map config) {
+	public static void setupTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(sis, config)
+		killAllJobsWithPrefix(tr, config)
 	}
 
 
-	public static void teardownTestRun(List<ServiceInterface> sis, Map config) {
+	public static void teardownTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(sis, config)
+		killAllJobsWithPrefix(tr, config)
 	}
 
 	protected List jobdirs = Collections.synchronizedList(Lists.newArrayList())

@@ -4,37 +4,38 @@ import grisu.control.ServiceInterface
 import grisu.jcommons.utils.FileAndUrlHelpers
 import grisu.model.FileManager
 import grisu.model.GrisuRegistryManager
+import grisu.tests.testRuns.TestRun
 
 class CopyTest extends AbstractTest implements Test {
 
-	public static setupTestRun(List<ServiceInterface> sis, Map config) {
+	public static setupTestRun(TestRun tr, Map config) {
 
 		def targetDir = config.get("targetDir")
-		deleteTargetDir(sis, targetDir)
+		deleteTargetDir(tr, targetDir)
 
-		addRunLog("Getting filesize to test against after test execution...")
+		tr.addRunLog("Getting filesize to test against after test execution...")
 		def sourceUrl = config.get("sourceUrl")
-		filesize = sis.get(0).getFileSize(sourceUrl)
-		addRunLog("Filesize of "+sourceUrl+": "+filesize)
+		filesize = tr.getServiceInterfaces().get(0).getFileSize(sourceUrl)
+		tr.addRunLog("Filesize of "+sourceUrl+": "+filesize)
 		filename = FileAndUrlHelpers.getFilename(sourceUrl)
 	}
 
-	private static deleteTargetDir(List<ServiceInterface> sis, String targetDir) {
-		for ( si in sis ) {
+	private static deleteTargetDir(TestRun tr, String targetDir) {
+		for ( si in tr.getServiceInterfaces() ) {
 			FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
 			try {
-				addRunLog ("Delete target dir: "+targetDir)
+				tr. addRunLog ("Delete target dir: "+targetDir)
 				fm.deleteFile(targetDir)
 			} catch(all) {
 			}
 		}
 	}
 
-	public static teardownTestRun(List<ServiceInterface> sis, Map config) {
+	public static teardownTestRun(TestRun tr, Map config) {
 
 		def targetDir = config.get("targetDir")
 
-		deleteTargetDir(sis, targetDir)
+		deleteTargetDir(tr, targetDir)
 	}
 
 	public String sourceUrl
