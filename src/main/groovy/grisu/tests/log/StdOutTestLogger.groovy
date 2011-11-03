@@ -14,6 +14,8 @@ class StdOutTestLogger implements TestLogger {
 	private long started
 	private long ended
 
+	private def failedTests = []
+
 	public StdOutTestLogger(TestRun tr, boolean displayTestLogs) {
 		this.tr = tr
 		this.displayTestLogs = displayTestLogs
@@ -55,6 +57,7 @@ class StdOutTestLogger implements TestLogger {
 			}
 			println '\tTest '+test.getName()+' failed: '+msg
 			failed++
+			failedTests.add(test)
 		} else {
 			println '\tTest '+test.getName()+' success!'
 			success++
@@ -63,6 +66,12 @@ class StdOutTestLogger implements TestLogger {
 
 	void getStatus() {
 		println 'Failed tests: '+failed
+		if ( failed ) {
+			println '\tError(s):'
+			for ( def test : failedTests ) {
+				println '\t\t'+ test.getName()+': '+test.getCheckComment()
+			}
+		}
 		println 'Successfull tests: '+success
 		println 'Duration: '+(tr.getDuration()/1000)+' seconds'
 	}

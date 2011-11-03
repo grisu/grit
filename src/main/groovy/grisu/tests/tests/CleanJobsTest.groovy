@@ -98,9 +98,11 @@ class CleanJobsTest extends AbstractTest implements Test {
 			success = false
 			addLog("Test not successful, jobdirectories left:")
 			addLog("\t"+failedTests.join(" ,"))
+			check_comment = "Jobdirectories left:\n\t\t\t"+failedTests.join("\n\t\t\t")
 		} else {
 			success = true
 			addLog("No jobdirectories left. Test successful.")
+			check_comment = "All jobdirectories deleted."
 		}
 	}
 }

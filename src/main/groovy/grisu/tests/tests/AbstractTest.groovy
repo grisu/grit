@@ -61,6 +61,12 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	protected boolean success = false
 	protected boolean success_check = false
 
+	protected String check_comment = null
+
+	public String getCheckComment() {
+		return check_comment
+	}
+
 	Exception exception = null
 	Exception setupException = null
 	Exception checkException = null
@@ -451,13 +457,20 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		try {
 			check()
 			addLog "Finished check."
-			myLogger.debug("Checking test "+batch+" / "+parallel+" successful.")
-			success_check = true
-			tr.testChecked(this, true)
+			if ( success ) {
+				myLogger.debug("Checking test "+batch+" / "+parallel+" successful.")
+				success_check = true
+				tr.testChecked(this, true)
+			} else {
+				myLogger.debug("Checking test "+batch+" / "+parallel+" showed error.")
+				success_check = false
+				tr.testChecked(this, false)
+			}
 		} catch (all) {
 			addLog "Check error: "+all.getLocalizedMessage()
 			myLogger.debug("Checking test "+batch+" / "+parallel+" error: "+all.getLocalizedMessage())
 			checkException = all
+			success_check = false
 			tr.testChecked(this, false)
 		}
 	}
