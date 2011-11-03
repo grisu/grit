@@ -111,15 +111,19 @@ class TestRun {
 
 	public void addTestLog(AbstractTest test, String msg) {
 
+		long timestamp = new Date().getTime()
+
 		testLoggers.each {
-			it.addTestLogMessage(test, msg)
+			it.addTestLogMessage(test, timestamp, msg)
 		}
 	}
 
 	public void addRunLog(String msg) {
 
+		long timestamp = new Date().getTime()
+
 		testLoggers.each {
-			it.addTestRunLogMessage(this, msg)
+			it.addTestRunLogMessage(this, timestamp, msg)
 		}
 	}
 
@@ -233,6 +237,18 @@ class TestRun {
 		}
 	}
 
+	public void testExecuted(AbstractTest test, boolean success) {
+		testLoggers.each {
+			it.testExecuted(test, success)
+		}
+	}
+
+	public void testChecked(AbstractTest test, boolean success) {
+		testLoggers.each {
+			it.testChecked(test, success)
+		}
+	}
+
 	private void kickOffExecution() {
 
 
@@ -318,6 +334,10 @@ class TestRun {
 		}
 
 		return r
+	}
+
+	public void getStatus() {
+		testLoggers.each { it.getStatus() }
 	}
 
 	/**

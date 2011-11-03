@@ -32,7 +32,7 @@ public class TestStarter {
 			tr.setServiceInterfaces([si])
 			tr.kickOffAndWaitForTestsToFinish()
 			tr.waitForCleanUp()
-			//tr.printResults()
+			tr.getStatus()
 		}
 	}
 

@@ -66,6 +66,14 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	Exception checkException = null
 	Exception tearDownException = null
 
+	public Exception getCheckException() {
+		return checkException
+	}
+
+	public Exception getExecuteException() {
+		return executeException;
+	}
+
 
 	protected List jobs = Collections.synchronizedList(Lists.newArrayList())
 	protected List jobnames = Collections.synchronizedList(Lists.newArrayList())
@@ -445,10 +453,12 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 			addLog "Finished check."
 			myLogger.debug("Checking test "+batch+" / "+parallel+" successful.")
 			success_check = true
+			tr.testChecked(this, true)
 		} catch (all) {
 			addLog "Check error: "+all.getLocalizedMessage()
 			myLogger.debug("Checking test "+batch+" / "+parallel+" error: "+all.getLocalizedMessage())
 			checkException = all
+			tr.testChecked(this, false)
 		}
 	}
 
@@ -471,14 +481,18 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 			finishedTime = new Date()
 			this.success = true
 			myLogger.debug("Finished test successfully: "+batch+" / "+parallel)
+			duration = finishedTime.getTime()-startedTime.getTime()
+			addLog("Duration of test execution: "+duration+" ms")
+			tr.testExecuted(this, true)
 		} catch(all) {
 			addLog "Test error: "+all.getLocalizedMessage()
 			finishedTime = new Date()
 			exception = all
 			myLogger.debug("Finished test "+batch+" / "+parallel+ " with error: "+all.getLocalizedMessage())
-		} finally {
 			duration = finishedTime.getTime()-startedTime.getTime()
 			addLog("Duration of test execution: "+duration+" ms")
+			tr.testExecuted(this, false)
+		} finally {
 		}
 	}
 
