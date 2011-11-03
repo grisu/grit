@@ -6,18 +6,22 @@ import grisu.tests.tests.AbstractTest
 class StdOutTestLogger implements TestLogger {
 
 	private boolean displayTestLogs = false
+	private final TestRun tr
 
 	private int success = 0
 	private int failed = 0
 
-	public StdOutTestLogger(boolean displayTestLogs) {
+	private long started
+	private long ended
+
+	public StdOutTestLogger(TestRun tr, boolean displayTestLogs) {
+		this.tr = tr
 		this.displayTestLogs = displayTestLogs
 	}
 
-	public StdOutTestLogger() {
-		this(false)
+	public StdOutTestLogger(TestRun tr) {
+		this(tr, false)
 	}
-
 
 	public void addTestLogMessage(AbstractTest source, long timestamp, String msg) {
 
@@ -60,5 +64,6 @@ class StdOutTestLogger implements TestLogger {
 	void getStatus() {
 		println 'Failed tests: '+failed
 		println 'Successfull tests: '+success
+		println 'Duration: '+(tr.getDuration()/1000)+' seconds'
 	}
 }

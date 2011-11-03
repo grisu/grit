@@ -41,10 +41,13 @@ class TestRun {
 	public int runs = 1
 	public int batches = 1
 
+	private long testrunStart
+	private long testrunEnd
+
 	public boolean skip_setup = false
 	public boolean skip_teardown = false
 
-	def testLoggers = [new StdOutTestLogger()]
+	def testLoggers = [new StdOutTestLogger(this)]
 
 	public void setTestLoggers(List loggers) {
 		this.testLoggers = loggers
@@ -268,6 +271,7 @@ class TestRun {
 		int poolsize = runs * batches
 		ExecutorService executor = Executors.newFixedThreadPool(poolsize)
 
+		testrunStart = new Date().getTime()
 		myLogger.debug("Starting tests...")
 		def execute = { t ->
 			executor.submit(t as Callable)
@@ -280,6 +284,8 @@ class TestRun {
 		myLogger.debug("Waiting for tests to execute...")
 		executor.shutdown()
 		executor.awaitTermination(10, TimeUnit.HOURS)
+		testrunEnd = new Date().getTime()
+
 		addLog "Test run finished."
 
 		myLogger.debug("Starting to check tests...")
@@ -301,6 +307,17 @@ class TestRun {
 		} else {
 			addLog("Skipping tearing down test.")
 		}
+	}
+
+	public long getDuration() {
+		if (testrunStart <= 0 ) {
+			return 0L
+		}
+		if ( testrunEnd <= 0) {
+			long now = new Date().getTime()
+			return now-testrunStart
+		}
+		return testrunEnd-testrunStart
 	}
 
 	private void cleanUp() {
