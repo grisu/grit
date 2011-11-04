@@ -1,7 +1,6 @@
 package grisu.tests.testRuns
 
 import grisu.control.ServiceInterface
-import grisu.tests.log.StdOutTestLogger
 import grisu.tests.log.TestLogger
 import grisu.tests.tests.AbstractTest
 import grisu.tests.tests.Test
@@ -41,24 +40,40 @@ class TestRun {
 	public int runs = 1
 	public int batches = 1
 
+	public final long testrunCreated = new Date().getTime()
+
 	private long testrunStart
 	private long testrunEnd
 
 	public boolean skip_setup = false
 	public boolean skip_teardown = false
 
-	def testLoggers = [new StdOutTestLogger(this)]
+	def testLoggers = []
 
-	public void setTestLoggers(List loggers) {
-		this.testLoggers = loggers
+	public void setTestLoggers(def loggers) {
+
+		this.testLoggers = []
+
+		if ( loggers.respondsTo('each') ) {
+			loggers.each { addTestLogger(it) }
+		} else {
+			this.testLoggers.add(loggers)
+		}
 	}
 
-	public void setTestLogger(TestLogger l) {
-		this.testLoggers = [l]
-	}
+	public void addTestLogger(def l) {
 
-	public void addTestLogger(TestLogger l) {
-		testLoggers.add(l)
+		TestLogger tl = null
+		if (l instanceof TestLogger) {
+			tl = l
+		} else {
+			tl = l.newInstance()
+		}
+		try {
+			tl.setTestRun(this)
+		} catch (all) {
+		}
+		this.testLoggers.add(tl)
 	}
 
 	public void removeTestLogger(TestLogger l) {

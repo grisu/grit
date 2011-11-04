@@ -91,13 +91,16 @@ class DownloadJobTest extends AbstractTest implements Test {
 		}
 
 		if ( failures ) {
-			addLog(failures.size()+" downloads failed: ")
+			String msg = failures.size()+" downloads failed: \n"
 			for ( f in failures ) {
-				addLog("\t"+f.getAbsolutePath())
+				msg = msg + "\t"+f.getAbsolutePath()+'\n'
 			}
+			addLog(msg)
+			check_comment = msg
 			success = false
 		} else {
 			addLog("All downloads finished successfully.")
+			check_comment = "All downloads finished successfully"
 			success = true
 		}
 	}

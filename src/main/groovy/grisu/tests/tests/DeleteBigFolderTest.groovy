@@ -44,9 +44,12 @@ class DeleteBigFolderTest extends AbstractTest implements Test {
 			addLog("Checking whether folder still exists: "+jobdir)
 			if ( fm.fileExists(jobdir) ) {
 				addLog("Folder still exists, clean job failed: "+jobdir)
+				check_comment = 'Folder not deleted: '+jobdir
 				success = false
 			} else {
 				addLog("Folder deleted, test successful.")
+				success = true
+				check_comment = 'Folder does not exist anymore'
 			}
 		}
 	}

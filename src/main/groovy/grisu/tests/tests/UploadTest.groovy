@@ -65,8 +65,10 @@ class UploadTest extends AbstractTest implements Test {
 
 		if ( success ) {
 			addLog("Success: all uploads successful.")
+			check_comment = "All uploads successful"
 		} else {
 			addLog("Test failed: at least one upload didn't succeed.")
+			check_comment = "At least one upload didn't succeed"
 		}
 	}
 

@@ -38,6 +38,10 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		this.tr = tr
 	}
 
+	public TestRun getTestRun() {
+		return this.tr
+	}
+
 	public static final JOB_CREATION_PARAMETERS = [
 		'group',
 		'application',
@@ -61,7 +65,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	protected boolean success = false
 	protected boolean success_check = false
 
-	protected String check_comment = null
+	protected String check_comment = 'n/a'
 
 	public String getCheckComment() {
 		return check_comment

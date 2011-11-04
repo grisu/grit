@@ -59,8 +59,10 @@ class CopyTest extends AbstractTest implements Test {
 		success = (resultSize == filesize)
 		if (success) {
 			addLog("Test successful")
+			check_comment = 'Filesize comparision successful'
 		} else {
 			addLog("Test failed, filesizes differ")
+			check_comment = 'Filesizes differ: '+resultSize + ' / '+ filesize
 		}
 	}
 

@@ -1,6 +1,7 @@
 package grisu.tests.testRuns
 
 import grisu.frontend.control.login.LoginManager
+import grisu.tests.log.DefaultTestLogger
 
 
 
@@ -13,37 +14,36 @@ class TestRunFactory {
 
 		def result = []
 
+		// create testrun for every root-level element in config file
 		for ( def name in testrun.keySet() ) {
 
-			def configMap = [:]
+
 			ConfigObject config = testrun.getProperty(name)
 
-			for ( def key in config.keySet()) {
-				configMap.put(key, config.get(key))
-			}
-
-			def disable = configMap.get("disable")
+			def disable = config.get("disable", false)
 			if ( disable ) {
 				continue
-			} else {
-				configMap.remove("disable")
 			}
 
-			def testclass = configMap.get("test")
-			configMap.remove("test")
+			def batches = config.get("batches", 1)
+			def runs = config.get("runs", 1)
 
-			def batches = configMap.get("batches")
-			configMap.remove("batches")
-			def runs = configMap.get("runs")
-			configMap.remove("runs")
-			def skipSetup = configMap.get("skip_setup")
-			configMap.remove("skip_setup")
-			def skipTearDown = configMap.get("skip_teardown")
-			configMap.remove("skip_teardown")
+			def skipSetup = config.get("skip_setup", false)
+			def skipTearDown = config.get("skip_teardown", false)
+
+			def testclass = config.get('test').get('type')
+			if ( ! testclass ) {
+				throw new RuntimeException("Could not create testrun, no test type specified...");
+			}
 
 			TestRun tr = new TestRun()
 			tr.setName(name)
 			tr.setTestClass(testclass)
+
+			def loggers = config.get("logger", new DefaultTestLogger(tr))
+
+			tr.setTestLoggers(loggers)
+
 			if (batches) {
 				tr.setBatches(batches)
 			}
@@ -57,7 +57,11 @@ class TestRunFactory {
 				tr.setSkipTearDown(skipTearDown)
 			}
 
-			tr.setConfigMap(configMap)
+
+
+			Map testConfigMap = config.get('test')
+			testConfigMap.remove('type')
+			tr.setConfigMap(testConfigMap)
 
 			result.add(tr)
 		}

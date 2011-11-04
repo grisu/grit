@@ -35,8 +35,10 @@ class DownloadTest extends AbstractTest implements Test {
 
 		if ( success ) {
 			addLog("Success: all downloads successful.")
+			check_comment = "All downloads successful."
 		} else {
 			addLog("Test failed: at least one download didn't succeed.")
+			check_comment = "At least one download didn't succeed."
 		}
 	}
 

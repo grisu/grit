@@ -27,7 +27,7 @@ class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListene
 
 	public static void setupTestRun(TestRun tr, Map config) {
 
-		killAllJobsWithPrefix(tr)
+		killAllJobsWithPrefix(tr, config)
 
 		List files = config.get("inputfiles")
 
@@ -54,7 +54,7 @@ class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListene
 			archiveUrls.add(archiveUrl)
 
 			addLog("Waiting for archiving of job to finish.")
-			StatusObject so =StatusObject.waitForActionToFinish(si, archiveUrl, 5, true, false)
+			StatusObject so =StatusObject.waitForActionToFinish(si, archiveUrl, 5, true)
 
 			if (so.getStatus().isFailed()) {
 				def ec = so.getStatus().getErrorCause()
@@ -107,11 +107,15 @@ class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListene
 
 		if ( failedTests ) {
 			success = false
-			addLog("Test not successful, jobdirectories left:")
-			addLog("\t"+failedTests.join(" ,"))
+			def msg = "Test not successful, jobdirectories left:"
+			msg = msg + "\t"+failedTests.join(" ,")
+			addLog(msg)
+			check_comment = msg
 		} else {
 			success = true
-			addLog("No jobdirectories left. Test successful.")
+			def msg = "No jobdirectories left. Test successful."
+			addLog(msg)
+			check_comment = msg
 		}
 	}
 

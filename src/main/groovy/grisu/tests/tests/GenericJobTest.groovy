@@ -70,9 +70,11 @@ class GenericJobTest extends AbstractTest implements Test {
 		if (require_job_success && failedJobs) {
 			success = false
 			addLog("Test failed: "+failedJobs.size())
+			check_comment = failedJobs.size()+" jobs failed"
 		} else {
 			success = true
 			addLog("Test successful.")
+			check_comment = 'All jobs finished successfully'
 		}
 	}
 
