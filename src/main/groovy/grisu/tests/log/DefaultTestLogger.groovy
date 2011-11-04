@@ -23,7 +23,7 @@ class DefaultTestLogger implements TestLogger {
 	private def failedTests = []
 	private def checkedTests = []
 
-	private File logDir = new File('.')
+	public File logDir = new File('.')
 
 	public DefaultTestLogger(TestRun tr, boolean displayTestLogs) {
 		setTestRun(tr)
@@ -37,14 +37,9 @@ class DefaultTestLogger implements TestLogger {
 	public DefaultTestLogger() {
 	}
 
-	public void setLogDir(def file) {
-		this.logDir = file
-	}
-
 	public void setTestRun(TestRun tr) {
 		this.tr = tr
 		getLogFile(tr).delete()
-		getLogFile(tr).append('TestRun '+tr.getName()+'created: '+tr.testrunCreated+'\n\n')
 	}
 
 	public void addTestLogMessage(AbstractTest source, long timestamp, String msg) {
@@ -66,10 +61,10 @@ class DefaultTestLogger implements TestLogger {
 			String line = format.format(timestamp-tr.testrunCreated)
 
 			if (testName) {
-				line = line + '    '+testName+':\t'
+				line = line + '    ['+testName+']\t'
 				getLogFile(tr).append(line+msg+'\n')
 			} else if ( timestamp >= 0 ){
-				line = line + ' ['+tr.getName()+']:\t'
+				line = line + '  '+tr.getName()+'\t'
 				getLogFile(tr).append(line+msg+'\n')
 			} else {
 				getLogFile(tr).append('\n\n'+msg+'\n')
@@ -78,7 +73,7 @@ class DefaultTestLogger implements TestLogger {
 	}
 
 	private File getLogFile(TestRun tr) {
-		File logFile = new File(logDir, tr.getName()+'.log')
+		File logFile = new File(logDir, tr.getName()+'_'+tr.testrunCreated+'.log')
 		return logFile
 	}
 
