@@ -2,8 +2,8 @@ package grisu.tests
 
 import grisu.frontend.control.login.LoginManager
 import grisu.jcommons.dependencies.BouncyCastleTool
-import grisu.jcommons.utils.CliHelpers;
 import grisu.jcommons.utils.Version
+import grisu.jcommons.view.cli.CliHelpers
 import grisu.tests.testRuns.TestRunFactory
 
 import org.slf4j.MDC
