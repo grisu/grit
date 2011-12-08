@@ -259,21 +259,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>grisu.backend</groupId>
-			<artifactId>grisu-core</artifactId>
-			<version>0.3.7</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>org.codehaus.gpars</groupId> -->
 		<!-- <artifactId>gpars</artifactId> -->
@@ -283,6 +268,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.3</version>
+		</dependency>
+		<dependency>
+			<groupId>grisu.backend</groupId>
+			<artifactId>grisu-core</artifactId>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<name>Gri(d|su) Test client written in Groovy</name>

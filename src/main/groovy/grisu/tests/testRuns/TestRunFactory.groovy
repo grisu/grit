@@ -7,6 +7,8 @@ import grisu.tests.log.DefaultTestLogger
 
 
 class TestRunFactory {
+	
+	static File logDir = new File('.');
 
 	static List createTestRuns(String pathToConfigFile) {
 
@@ -25,7 +27,6 @@ class TestRunFactory {
 				continue
 			}
 
-			def batches = config.get("batches", 1)
 			def runs = config.get("runs", 1)
 
 			def skipSetup = config.get("skip_setup", false)
@@ -40,13 +41,10 @@ class TestRunFactory {
 			tr.setName(name)
 			tr.setTestClass(testclass)
 
-			def loggers = config.get("logger", new DefaultTestLogger(tr))
+			def loggers = config.get("logger", new DefaultTestLogger(tr, logDir))
 
 			tr.setTestLoggers(loggers)
 
-			if (batches) {
-				tr.setBatches(batches)
-			}
 			if (runs) {
 				tr.setRuns(runs)
 			}

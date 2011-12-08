@@ -19,7 +19,7 @@ class UploadTest extends AbstractTest implements Test {
 	}
 
 	private static deleteTargetDir(TestRun tr, String targetDir) {
-		for ( si in tr.getServiceInterfaces() ) {
+		for ( si in tr.getServiceInterfaces().values() ) {
 			FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
 			try {
 				tr.addRunLog ("Delete target dir...")
@@ -98,7 +98,7 @@ class UploadTest extends AbstractTest implements Test {
 
 
 	protected void setup() {
-		this.targetTestDir = targetDir+"/"+getBatchId()+"/"+getParallelId()
+		this.targetTestDir = targetDir+"/"+getCertName()+"/"+getParallelId()
 		this.remoteFile = targetTestDir + "/"+filename
 
 		addLog("Creating target directory: "+this.targetTestDir)

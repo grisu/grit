@@ -25,13 +25,14 @@ class DefaultTestLogger implements TestLogger {
 
 	public File logDir = new File('.')
 
-	public DefaultTestLogger(TestRun tr, boolean displayTestLogs) {
+	public DefaultTestLogger(TestRun tr, boolean displayTestLogs, File logdir=new File('.')) {
 		setTestRun(tr)
 		this.displayTestLogs = displayTestLogs
+		this.logDir = logdir
 	}
 
-	public DefaultTestLogger(TestRun tr) {
-		this(tr, false)
+	public DefaultTestLogger(TestRun tr, File logdir=new File('.')) {
+		this(tr, false, logdir)
 	}
 
 	public DefaultTestLogger() {

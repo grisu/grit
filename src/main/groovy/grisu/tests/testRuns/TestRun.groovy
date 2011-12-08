@@ -36,9 +36,8 @@ class TestRun {
 
 	Logger myLogger = Logger.getLogger(TestRun.class.getName())
 
-	public List serviceInterfaces
+	public Map serviceInterfaces
 	public int runs = 1
-	public int batches = 1
 
 	public final long testrunCreated = new Date().getTime()
 
@@ -88,10 +87,6 @@ class TestRun {
 		this.skip_teardown = skip
 	}
 
-	public void setBatches(int b) {
-		this.batches = b
-	}
-
 	public void setRuns(int r) {
 		this.runs = r
 	}
@@ -111,7 +106,7 @@ class TestRun {
 	public TestRun() {
 	}
 
-	public List getServiceInterfaces() {
+	public Map getServiceInterfaces() {
 		return serviceInterfaces
 	}
 
@@ -152,11 +147,7 @@ class TestRun {
 	 *
 	 * @param sis the ServiceInterfaces
 	 */
-	public void setServiceInterfaces(List sis) {
-
-		if ( sis.size() < batches ) {
-			throw new IllegalArgumentException("Not enough serviceinterfaces to run "+batches+" batches of tests.")
-		}
+	public void setServiceInterfaces(Map sis) {
 
 		this.serviceInterfaces = sis
 	}
@@ -166,15 +157,20 @@ class TestRun {
 		//		Method m = testClass.getMethod("setTestRun", TestRun.class)
 		//		m.invoke(null, this)
 
-		for ( b in 1..batches) {
+		for ( no in 1..runs ) {
 
-			for ( no in 1..runs ) {
+			for ( name in serviceInterfaces.keySet()) {
 
-				Test t = getTest(serviceInterfaces.get(b-1), b, no)
+				Test t = getTest(serviceInterfaces.get(name), name, no)
 				t.setTestRun(this)
 				tests.add(t)
 			}
 		}
+		
+//		for (Test t : tests) {
+//			println t.getName()
+//			println '\t'+t.getServiceInterface().getDN()
+//		}
 
 		executionThread = new Thread() {
 					public void run() {
@@ -196,14 +192,14 @@ class TestRun {
 	 * @param parallel_id the id of the Test. Specifies which id within a TestRun the test will have.
 	 * @return
 	 */
-	private Test getTest(ServiceInterface si, int batch, int parallel_id) {
+	private Test getTest(ServiceInterface si, String certname, int parallel_id) {
 
 		def constructor = testClass.getConstructor()
 
 		Test test = constructor.newInstance()
 
 		test.setServiceInterface(si)
-		test.setBatchId(batch)
+		test.setCertName(certname)
 		test.setParallelId(parallel_id)
 
 		for ( def key : configMap.keySet() ) {
@@ -283,8 +279,7 @@ class TestRun {
 			addLog("Skipping setting up testrun.")
 		}
 
-		int poolsize = runs * batches
-		ExecutorService executor = Executors.newFixedThreadPool(poolsize)
+		ExecutorService executor = Executors.newFixedThreadPool(runs*serviceInterfaces.size())
 
 		testrunStart = new Date().getTime()
 		myLogger.debug("Starting tests...")
@@ -338,9 +333,9 @@ class TestRun {
 	private void cleanUp() {
 
 		def tearDownTest = { t ->
-			myLogger.debug("Tearing down test "+t.getBatchId()+ " / "+ t.getParallelId()+"...")
+			myLogger.debug("Tearing down test "+t.getCertName()+ " / "+ t.getParallelId()+"...")
 			t.tearDownTest()
-			myLogger.debug("Teared down test "+t.getBatchId()+ " / "+t.getParallelId()+"...")
+			myLogger.debug("Teared down test "+t.getCertName()+ " / "+t.getParallelId()+"...")
 		}
 		addLog "Tearing down tests..."
 		tests.each(tearDownTest)

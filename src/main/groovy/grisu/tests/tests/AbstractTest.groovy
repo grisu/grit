@@ -53,7 +53,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 	public ServiceInterface si
 	public FileManager fm
-	private int batch
+	private String cert_name
 	private int parallel
 
 	private TestRun tr
@@ -122,7 +122,8 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	}
 
 	public static void killAllJobsWithPrefix(TestRun tr, String prefix) {
-		for ( ServiceInterface si : tr.getServiceInterfaces() ) {
+		tr.getServiceInterfaces().each { name, si ->
+			tr.addRunLog('Credential '+name+': ')
 			killAllJobsWithPrefixPr(si, tr, prefix)
 		}
 	}
@@ -175,6 +176,8 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 		job.setApplication(application)
 		job.setCommandline(commandline)
+		
+		job.setSubmissionLocation(queue)
 
 		for ( def inputfile : inputfiles) {
 			job.addInputFileUrl(inputfile)
@@ -220,7 +223,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 		for ( int index=0; index<repetitions; index++ ) {
 
-			prepareNewJob(this.jobname_prefix+"_"+batchId+"_"+parallelId+"_j"+index)
+			prepareNewJob(this.jobname_prefix+"_"+getCertName()+"_"+parallelId+"_j"+index)
 		}
 	}
 
@@ -232,7 +235,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		if ( reuse_existing_jobs ) {
 
 			for (def jobname in si.getAllJobnames(null).asSortedSet()) {
-				if (jobname.startsWith(jobname_prefix+"_"+getBatchId()+"_"+getParallelId())) {
+				if (jobname.startsWith(jobname_prefix+"_"+getCertName()+"_"+getParallelId())) {
 					addLog("Found existing job: "+jobname+". Adding it to this testrun...")
 					JobObject job = new JobObject(si, jobname)
 					jobs.add(job)
@@ -368,8 +371,8 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		this.fm = GrisuRegistryManager.getDefault(si).getFileManager()
 	}
 
-	public void setBatchId(int id) {
-		this.batch = id
+	public void setCertName(String id) {
+		this.cert_name = id
 	}
 
 	public void setParallelId(int id) {
@@ -380,8 +383,8 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		return this.parallel
 	}
 
-	public int getBatchId() {
-		return this.batch
+	public String getCertName() {
+		return this.cert_name
 	}
 
 	/**
@@ -408,51 +411,54 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	}
 
 	public String getName() {
-		return batch+" / "+parallel;
+		return getCertName()+" / "+parallel;
+	}
+
+	public ServiceInterface getServiceInterface() {
+		return si
 	}
 
 
-
 	public void tearDownTest() {
-		myLogger.debug("Tearing down test: "+batch+" / "+parallel)
+		myLogger.debug("Tearing down test: "+getCertName()+" / "+parallel)
 		try {
 			addLog "Start tearDown..."
 			tearDown()
 			addLog "Finished tearDown."
-			myLogger.debug("Tearing down test "+batch+" / "+parallel+" successful.")
+			myLogger.debug("Tearing down test "+getCertName()+" / "+parallel+" successful.")
 		} catch (all) {
 			addLog "TearDown error: "+all.getLocalizedMessage()
-			myLogger.debug("Tearing down test "+batch+" / "+parallel+" error: "+all.getLocalizedMessage())
+			myLogger.debug("Tearing down test "+getCertName()+" / "+parallel+" error: "+all.getLocalizedMessage())
 			tearDownException = all
 		}
 	}
 
 	public void setupTest() {
-		myLogger.debug("Setting up test: "+batch+" / "+parallel)
+		myLogger.debug("Setting up test: "+getCertName()+" / "+parallel)
 		addLog "Start setup..."
 		try {
 			setup()
 			addLog "Finished setup."
-			myLogger.debug("Setting up test "+batch+" / "+parallel+" successful.")
+			myLogger.debug("Setting up test "+getCertName()+" / "+parallel+" successful.")
 		} catch (all) {
 			addLog "Setup error: "+all.getLocalizedMessage()
-			myLogger.debug("Setting up test "+batch+" / "+parallel+" error: "+all.getLocalizedMessage())
+			myLogger.debug("Setting up test "+getCertName()+" / "+parallel+" error: "+all.getLocalizedMessage())
 			setupException = all
 		}
 	}
 
 
 	void checkTest() {
-		myLogger.debug("Checking test: "+batch+" / "+parallel)
+		myLogger.debug("Checking test: "+getCertName()+" / "+parallel)
 
 		if (setupException || exception ) {
-			myLogger.debug("Not checking test: "+batch+" /"+parallel)
+			myLogger.debug("Not checking test: "+getCertName()+" /"+parallel)
 			addLog("Not checking test since setup or execution exception exist...")
 			return
 		}
 
 		if (!success) {
-			myLogger.debug("Not checking test: "+batch+" /"+parallel)
+			myLogger.debug("Not checking test: "+getCertName()+" /"+parallel)
 			addLog("Not checking test since it didn't run successfully...")
 			return
 		}
@@ -462,17 +468,17 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 			check()
 			addLog "Finished check."
 			if ( success ) {
-				myLogger.debug("Checking test "+batch+" / "+parallel+" successful.")
+				myLogger.debug("Checking test "+getCertName()+" / "+parallel+" successful.")
 				success_check = true
 				tr.testChecked(this, true)
 			} else {
-				myLogger.debug("Checking test "+batch+" / "+parallel+" showed error.")
+				myLogger.debug("Checking test "+getCertName()+" / "+parallel+" showed error.")
 				success_check = false
 				tr.testChecked(this, false)
 			}
 		} catch (all) {
 			addLog "Check error: "+all.getLocalizedMessage()
-			myLogger.debug("Checking test "+batch+" / "+parallel+" error: "+all.getLocalizedMessage())
+			myLogger.debug("Checking test "+getCertName()+" / "+parallel+" error: "+all.getLocalizedMessage())
 			checkException = all
 			success_check = false
 			tr.testChecked(this, false)
@@ -486,7 +492,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 			return
 		}
 
-		myLogger.debug("Starting test: "+batch+" / "+parallel)
+		myLogger.debug("Starting test: "+getCertName()+" / "+parallel)
 
 		try {
 
@@ -497,7 +503,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 			addLog "Finished test."
 			finishedTime = new Date()
 			this.success = true
-			myLogger.debug("Finished test successfully: "+batch+" / "+parallel)
+			myLogger.debug("Finished test successfully: "+getCertName()+" / "+parallel)
 			duration = finishedTime.getTime()-startedTime.getTime()
 			addLog("Duration of test execution: "+duration+" ms")
 			tr.testExecuted(this, true)
@@ -505,7 +511,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 			addLog "Test error: "+all.getLocalizedMessage()
 			finishedTime = new Date()
 			exception = all
-			myLogger.debug("Finished test "+batch+" / "+parallel+ " with error: "+all.getLocalizedMessage())
+			myLogger.debug("Finished test "+getCertName()+" / "+parallel+ " with error: "+all.getLocalizedMessage())
 			duration = finishedTime.getTime()-startedTime.getTime()
 			addLog("Duration of test execution: "+duration+" ms")
 			tr.testExecuted(this, false)
@@ -514,7 +520,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	}
 
 	public String getResult() {
-		String r = "("+ batch + " / "+parallel+"):\n"
+		String r = "("+ getCertName() + " / "+parallel+"):\n"
 		r += "\tSuccess: "+ wasSuccessful() + "\n"
 		r += "\tDuration: "+duration+" ms" + "\n"
 		r += "\tLog:" + "\n"

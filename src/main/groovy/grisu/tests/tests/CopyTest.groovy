@@ -15,13 +15,13 @@ class CopyTest extends AbstractTest implements Test {
 
 		tr.addRunLog("Getting filesize to test against after test execution...")
 		def sourceUrl = config.get("sourceUrl")
-		filesize = tr.getServiceInterfaces().get(0).getFileSize(sourceUrl)
+		filesize = tr.getServiceInterfaces().values().get(0).getFileSize(sourceUrl)
 		tr.addRunLog("Filesize of "+sourceUrl+": "+filesize)
 		filename = FileAndUrlHelpers.getFilename(sourceUrl)
 	}
 
 	private static deleteTargetDir(TestRun tr, String targetDir) {
-		for ( si in tr.getServiceInterfaces() ) {
+		for ( si in tr.getServiceInterfaces().values() ) {
 			FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
 			try {
 				tr. addRunLog ("Delete target dir: "+targetDir)
@@ -79,7 +79,7 @@ class CopyTest extends AbstractTest implements Test {
 
 	protected void setup() {
 
-		this.testTargetDir = targetDir+"/"+getBatchId()+"/"+getParallelId()
+		this.testTargetDir = targetDir+"/"+getCertName()+"/"+getParallelId()
 		this.remoteFile = testTargetDir + "/"+filename
 	}
 

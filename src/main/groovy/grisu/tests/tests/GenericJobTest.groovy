@@ -3,6 +3,7 @@ package grisu.tests.tests
 import grisu.control.JobConstants
 import grisu.control.ServiceInterface
 import grisu.frontend.model.job.JobObject
+import grisu.jcommons.constants.Constants;
 import grisu.tests.testRuns.TestRun
 
 import com.google.common.collect.Maps
@@ -32,6 +33,8 @@ class GenericJobTest extends AbstractTest implements Test {
 
 	@Override
 	protected void execute() {
+		
+		
 
 		for (def job : jobs) {
 			addLog("Creating job...")
@@ -96,10 +99,12 @@ class GenericJobTest extends AbstractTest implements Test {
 
 				job.addPropertyChangeListener(this)
 
-				job.setJobname(this.jobname_prefix+"_"+getBatchId()+"_"+getParallelId()+"_j"+i)
+				job.setJobname(this.jobname_prefix+"_"+getCertName()+"_"+getParallelId()+"_j"+i)
 
 				job.setApplication(application)
 				job.setCommandline('ls -la')
+				
+				job.setSubmissionLocation(queue)
 
 				for ( def inputfile : inputfiles) {
 					job.addInputFileUrl(inputfile)
