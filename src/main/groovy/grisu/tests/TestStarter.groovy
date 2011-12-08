@@ -50,6 +50,7 @@ public class TestStarter {
 	static void main(args) {
 
 		BouncyCastleTool.initBouncyCastle();
+		LoginManager.initEnvironment();
 
 		MDC.put("session",
 				System.getProperty("user.name") + "_" + new Date().getTime());
