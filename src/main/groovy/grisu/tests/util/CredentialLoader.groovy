@@ -1,9 +1,11 @@
 package grisu.tests.util
 
-import grisu.jcommons.utils.MyProxyServerParams;
-import grith.jgrith.Credential
-import grith.jgrith.CredentialFactory;
-import grith.jgrith.plainProxy.LocalProxy;
+import grisu.jcommons.utils.MyProxyServerParams
+import grith.jgrith.credential.Credential;
+import grith.jgrith.credential.CredentialFactory;
+import grith.jgrith.credential.ProxyCredential;
+import grith.jgrith.credential.X509Credential;
+import grith.jgrith.plainProxy.LocalProxy
 import grith.jgrith.utils.CliLogin
 
 
@@ -48,7 +50,7 @@ class CredentialLoader {
 		if ( ! path ) {
 			path = LocalProxy.PROXY_FILE
 		}
-		Credential c = new Credential(path)
+		Credential c = new ProxyCredential(path)
 		return c
 	}
 	
@@ -96,7 +98,7 @@ class CredentialLoader {
 		
 		def lifetime = co.get('lifetime')
 		
-		Credential c = new Credential(cert, key, passphrase.toCharArray(), lifetime)
+		Credential c = new X509Credential(cert, key, passphrase.toCharArray(), lifetime)
 	
 		return c
 	}
