@@ -1,50 +1,50 @@
 package grisu.tests.util
 
+import grisu.jcommons.constants.Enums.LoginType
 import grisu.jcommons.utils.MyProxyServerParams
-import grith.jgrith.credential.Credential;
-import grith.jgrith.credential.CredentialFactory;
-import grith.jgrith.credential.ProxyCredential;
-import grith.jgrith.credential.X509Credential;
+import grith.jgrith.credential.Credential
+import grith.jgrith.credential.CredentialFactory
+import grith.jgrith.credential.ProxyCredential
+import grith.jgrith.credential.X509Credential
 import grith.jgrith.plainProxy.LocalProxy
 import grith.jgrith.utils.CliLogin
 
 
 class CredentialLoader {
-	
+
 	static Map loadCredentials(String pathToCredentialConfigFile) {
-		
+
 		def credConfig = new ConfigSlurper().parse(new File(pathToCredentialConfigFile).toURL())
 		def credentials = [:]
 		for ( def name in credConfig.keySet() ) {
-			
+
 			ConfigObject config = credConfig.getProperty(name)
 			def type = config.get('type')
-			
+
 			switch (type) {
-				case Credential.Type.Local: 
+				case LoginType.X509_CERTIFICATE:
 					Credential c = loadLocal(config)
 					credentials.put(name, c)
 					break
-				case Credential.Type.SLCS:
+				case LoginType.SHIBBOLETH:
 					Credential c = createSlcs(config)
 					credentials.put(name, c)
 					break
-				case Credential.Type.MyProxy:
+				case LoginType.MYPROXY:
 					Credential c = loadMyProxy(config)
 					credentials.put(name, c)
 					break
-				case Credential.Type.Proxy:
+				case LoginType.LOCAL_PROXY:
 					Credential c = loadLocalProxy(config)
 					credentials.put(name, c)
 					break
-				default: 
+				default:
 					print 'default'
 			}
 		}
 		return credentials
-		
 	}
-	
+
 	static Credential loadLocalProxy(ConfigObject co) {
 		def path = co.get('path')
 		if ( ! path ) {
@@ -53,9 +53,9 @@ class CredentialLoader {
 		Credential c = new ProxyCredential(path)
 		return c
 	}
-	
+
 	static Credential loadMyProxy(ConfigObject co) {
-		
+
 		def username = co.get('username')
 		def password = co.get('password')
 		def myproxy = co.get('host')
@@ -70,49 +70,47 @@ class CredentialLoader {
 		if ( ! port ) {
 			port = MyProxyServerParams.DEFAULT_MYPROXY_PORT
 		}
-		
+
 		Credential c = CredentialFactory.createFromMyProxy(username, password, myproxy, port, lifetime*3600)
 		return c
 	}
-	
+
 	static Credential createSlcs(ConfigObject co) {
-		
+
 		def idp = co.get('idp')
 		def username = co.get('username')
-		
+
 		println "Using user '"+username+"' at '"+idp+"'..."
-		
+
 		char[] pw = CliLogin
 				.askPassword("Please enter institution password")
-				
-		Credential c = CredentialFactory.createFromSlcs(null, idp, username, pw)
-		
-		return c
-	}
-	
-	static Credential loadLocal(ConfigObject co) {
-		
-		def cert = co.get('certificate')
-		def key = co.get('key')
-		def passphrase = co.get('passphrase')
-		
-		def lifetime = co.get('lifetime')
-		
-		Credential c = new X509Credential(cert, key, passphrase.toCharArray(), lifetime)
-	
+
+		Credential c = CredentialFactory.createFromSlcs(null, idp, username, pw, -1)
+
 		return c
 	}
 
-	
+	static Credential loadLocal(ConfigObject co) {
+
+		def cert = co.get('certificate')
+		def key = co.get('key')
+		def passphrase = co.get('passphrase')
+
+		def lifetime = co.get('lifetime')
+
+		Credential c = new X509Credential(cert, key, passphrase.toCharArray(), lifetime)
+
+		return c
+	}
+
+
 	static void main(args) {
-		
+
 		def creds = loadCredentials('/home/markus/src/jgrith/src/main/resources/exampleCredConfig.groovy')
-		
+
 		for ( c in creds ) {
 			print c.getDn()
 			println '\t'+c.getRemainingLifetime()
 		}
-		
 	}
-	
 }
