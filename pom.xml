@@ -158,7 +158,7 @@
 									<mainClass>grisu.tests.TestStarter</mainClass>
 								</manifest>
 								<manifestEntries>
-									<Class-Path>bcprov.jar bcprov-jdk15-143.jar</Class-Path>
+									<Class-Path>bcprov.jar bcprov-jdk15-145.jar</Class-Path>
 								</manifestEntries>
 							</archive>
 
