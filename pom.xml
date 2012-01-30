@@ -339,7 +339,7 @@
 							<!-- </defineStatements> -->
 							<mappings>
 								<mapping>
-									<directory>/usr/local/grisu</directory>
+									<directory>/usr/local/lib/grisu</directory>
 									<filemode>755</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
