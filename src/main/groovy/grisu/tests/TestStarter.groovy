@@ -1,12 +1,12 @@
 package grisu.tests
 
 import grisu.frontend.control.login.LoginManager
-import grisu.jcommons.dependencies.BouncyCastleTool
+import grisu.jcommons.utils.EnvironmentVariableHelpers
 import grisu.jcommons.utils.Version
+import grisu.jcommons.view.cli.CliHelpers
+import grisu.jcommons.view.cli.LineByLineProgressDisplay
 import grisu.tests.testRuns.TestRunFactory
 import grisu.tests.util.CredentialLoader
-
-import org.slf4j.MDC
 
 public class TestStarter {
 
@@ -22,13 +22,11 @@ public class TestStarter {
 		}
 
 		this.backend = backend
-		
+
 		credentials.each { name, credential ->
 			def si = LoginManager.login(credential, backend, false)
 			sis.put(name, si)
 		}
-		
-
 	}
 
 
@@ -49,15 +47,18 @@ public class TestStarter {
 
 	static void main(args) {
 
-		BouncyCastleTool.initBouncyCastle();
+		Thread.currentThread().setName("main");
+
+		LoginManager.setClientName("grit");
+
+		LoginManager.setClientVersion(grisu.jcommons.utils.Version
+				.get("grit"));
+
+		EnvironmentVariableHelpers.loadEnvironmentVariablesToSystemProperties();
+
+		CliHelpers.setProgressDisplay(new LineByLineProgressDisplay());
+
 		LoginManager.initEnvironment();
-
-		MDC.put("session",
-				System.getProperty("user.name") + "_" + new Date().getTime());
-
-		// MDC.put("local_user", System.getProperty("user.name"));
-		MDC.put("grit-version", Version.get("grit"));
-
 
 		//CliHelpers.
 
@@ -67,20 +68,20 @@ public class TestStarter {
 		cli.b(longOpt:'backend', argName:'backend', args:1, required:true, 'Grisu backend to connect to, required')
 		cli.o(longOpt:'output', argName:'output', args:1, required:false, 'Directory for output (logs etc...)')
 		cli.c(longOpt:'credentials', argName:'credentials', args:1, required:true, 'Path to credential config file')
-		
+
 		def opt = cli.parse(args)
 
 		if ( ! opt ) {
 			System.exit(1)
 		}
-		
+
 		if (opt.h) {
 			cli.usage()
 			System.exit(0)
 		}
 
 		def backend = opt.b
-		
+
 		def cred_config_path = opt.c
 		def credentials = CredentialLoader.loadCredentials(cred_config_path)
 
