@@ -353,6 +353,10 @@
 								</mapping>
 
 							</mappings>
+							<requires>
+								<require>nesi</require>
+								<require>java-1.6.0-openjdk</require>
+							</requires>							
 							<preinstallScriptlet>
 								<script>echo "Installing Grit..."</script>
 							</preinstallScriptlet>
@@ -372,6 +376,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.7</version>
+		<version>0.9</version>
 	</parent>
 </project>
