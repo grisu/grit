@@ -290,16 +290,6 @@
 											</mapper>
 										</data>
 
-										<!-- <data> -->
-										<!-- <src>${project.basedir}/target/gricli.1</src> -->
-										<!-- <type>file</type> -->
-										<!-- <mapper> -->
-										<!-- <type>perm</type> -->
-										<!-- <prefix>/usr/share/man/man1/</prefix> -->
-										<!-- <user>root</user> -->
-										<!-- <group>root</group> -->
-										<!-- </mapper> -->
-										<!-- </data> -->
 									</dataSet>
 
 								</configuration>
@@ -392,6 +382,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.4</version>
+		<version>0.7</version>
 	</parent>
 </project>
