@@ -37,9 +37,14 @@ This will give you an executable jar file called "grit-binary.jar" in the target
 Running grit
 --------------------
 
-`java -jar grit-binary.jar -b dev <test-config-files>`
+`java -jar grit-binary.jar -b dev -c <credential-config-file> <test-config-files>`
 
-The -b option specifies the backend to connect to. Options at the moment are "bestgrid", "bestgrid-test", "dev", "local".
+Options:
+
+ -b : option specifies the backend to connect to. Options at the moment are "bestgrid", "bestgrid-test", "dev", "local".
+ -c : the credential(s) to be used with this testrun. examples in the examples/creds subfolder
+ 
+Examples for test-config files can be found in the examples/tests subfolder.
 
 Tests
 ---------
