@@ -273,7 +273,7 @@
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
-												<prefix>/usr/local/grisu/</prefix>
+												<prefix>/usr/local/lib/grisu/</prefix>
 												<user>root</user>
 												<group>root</group>
 											</mapper>
