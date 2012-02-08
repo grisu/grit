@@ -1,13 +1,12 @@
 package grisu.tests.testRuns
 
-import grisu.frontend.control.login.LoginManager
 import grisu.tests.log.DefaultTestLogger
 
 
 
 
 class TestRunFactory {
-	
+
 	static File logDir = new File('.');
 
 	static List createTestRuns(String pathToConfigFile) {
@@ -67,18 +66,18 @@ class TestRunFactory {
 		return result
 	}
 
-	static void main(args) {
-
-
-		def trs = createTestRuns("/home/markus/src/tests/test-templates/archive_job.groovy")
-
-		def si = LoginManager.loginCommandline('dev')
-
-		for (TestRun tr in trs) {
-			tr.setServiceInterfaces([si])
-			tr.kickOffAndWaitForTestsToFinish()
-			tr.waitForCleanUp()
-			tr.printResults()
-		}
-	}
+	//	static void main(args) {
+	//
+	//
+	//		def trs = createTestRuns("/home/markus/src/tests/test-templates/archive_job.groovy")
+	//
+	//		def si = LoginManager.loginCommandline('dev')
+	//
+	//		for (TestRun tr in trs) {
+	//			tr.setServiceInterfaces([si])
+	//			tr.kickOffAndWaitForTestsToFinish()
+	//			tr.waitForCleanUp()
+	//			tr.printResults()
+	//		}
+	//	}
 }

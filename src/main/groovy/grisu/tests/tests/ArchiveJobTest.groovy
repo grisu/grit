@@ -31,7 +31,7 @@ class ArchiveJobTest extends AbstractTest implements Test, PropertyChangeListene
 
 		List files = config.get("inputfiles")
 
-		ServiceInterface si = tr.getServiceInterfaces().values()[0]
+		ServiceInterface si = tr.getServiceInterfaces().values().iterator().next()
 
 		tr.addRunLog("Getting filesizes of input files...")
 		for ( def tmp : files ) {

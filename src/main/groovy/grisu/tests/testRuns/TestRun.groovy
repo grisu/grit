@@ -166,11 +166,11 @@ class TestRun {
 				tests.add(t)
 			}
 		}
-		
-//		for (Test t : tests) {
-//			println t.getName()
-//			println '\t'+t.getServiceInterface().getDN()
-//		}
+
+		//		for (Test t : tests) {
+		//			println t.getName()
+		//			println '\t'+t.getServiceInterface().getDN()
+		//		}
 
 		executionThread = new Thread() {
 					public void run() {
@@ -426,6 +426,7 @@ class TestRun {
 			// that's ok
 			addLog("Not running testrun setup since no setupTestRun method implemented for this test...")
 		} catch (Exception e) {
+			e.printStackTrace();
 			addLog("Could not setup testrun successfully: "+e.getLocalizedMessage())
 			throw e
 		}
