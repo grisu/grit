@@ -1,6 +1,5 @@
 package grisu.tests.util
 
-import grisu.jcommons.constants.Enums.LoginType
 import grisu.jcommons.utils.MyProxyServerParams
 import grith.jgrith.credential.Credential
 import grith.jgrith.credential.CredentialFactory
@@ -19,22 +18,22 @@ class CredentialLoader {
 		for ( def name in credConfig.keySet() ) {
 
 			ConfigObject config = credConfig.getProperty(name)
-			def type = config.get('type')
+			def type = config.get('login_type')
 
 			switch (type) {
-				case LoginType.X509_CERTIFICATE:
+				case 'x509':
 					Credential c = loadLocal(config)
 					credentials.put(name, c)
 					break
-				case LoginType.SHIBBOLETH:
+				case 'shib':
 					Credential c = createSlcs(config)
 					credentials.put(name, c)
 					break
-				case LoginType.MYPROXY:
+				case 'myproxy':
 					Credential c = loadMyProxy(config)
 					credentials.put(name, c)
 					break
-				case LoginType.LOCAL_PROXY:
+				case 'proxy':
 					Credential c = loadLocalProxy(config)
 					credentials.put(name, c)
 					break
@@ -98,7 +97,7 @@ class CredentialLoader {
 
 		def lifetime = co.get('lifetime')
 
-		Credential c = new X509Credential(cert, key, passphrase.toCharArray(), lifetime)
+		Credential c = new X509Credential(cert, key, passphrase.toCharArray(), lifetime, true)
 
 		return c
 	}

@@ -29,7 +29,7 @@ Building grit using Maven
 
 To build one of the above modules, cd into the module root directory of the module to build and execute: 
 
-    cd grisu
+    cd grit
     mvn clean install
     
 This will give you an executable jar file called "grit-binary.jar" in the target directory. In order to run, there also needs to be the bouncy-castle library jar (http://code.ceres.auckland.ac.nz/webstart/bcprov-jdk16-145.jar -- rename to bcprov.jar) in the same folder as grit-binary.jar...
