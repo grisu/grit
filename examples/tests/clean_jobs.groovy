@@ -1,15 +1,10 @@
 import grisu.jcommons.constants.Constants
-import grisu.tests.log.StdOutTestLogger
-import grisu.tests.testRuns.*
-import grisu.tests.tests.CleanJobsTest
+import grisu.tests.tests.*
 
 // the name of this testrun
 cleanJobs {
 
 	// testrun specific config
-
-	// which logger(s) to use for this testrun
-	logger = StdOutTestLogger
 
 	// whether to disable this testrun
 	disable = false

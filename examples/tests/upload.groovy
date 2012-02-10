@@ -1,4 +1,4 @@
-import grisu.tests.tests.UploadTest
+import grisu.tests.tests.*
 
 
 // the name of this testrun

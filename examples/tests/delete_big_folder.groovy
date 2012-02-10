@@ -1,6 +1,5 @@
 import grisu.jcommons.constants.Constants
-import grisu.tests.testRuns.*
-import grisu.tests.tests.DeleteBigFolderTest
+import grisu.tests.tests.*
 
 
 // the name of this testrun

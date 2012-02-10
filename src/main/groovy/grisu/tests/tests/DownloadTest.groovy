@@ -9,7 +9,7 @@ class DownloadTest extends AbstractTest implements Test {
 
 		def url = config.get("sourceUrl")
 		tr.addRunLog("Getting filesize of source file: "+url)
-		filesize = tr.getServiceInterfaces().values().get(0).getFileSize(url)
+		filesize = tr.getServiceInterfaces().values().iterator().next().getFileSize(url)
 		tr.addRunLog("Filesize: "+filesize)
 	}
 

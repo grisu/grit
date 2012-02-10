@@ -28,7 +28,7 @@ class DownloadJobTest extends AbstractTest implements Test {
 
 		List files = config.get("inputfiles")
 
-		ServiceInterface si = tr.getServiceInterfaces().values()[0]
+		ServiceInterface si = tr.getServiceInterfaces().values().iterator().next()
 		FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager()
 
 		tr.addRunLog("Getting filesizes of input files...")

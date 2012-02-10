@@ -15,7 +15,7 @@ class CopyTest extends AbstractTest implements Test {
 
 		tr.addRunLog("Getting filesize to test against after test execution...")
 		def sourceUrl = config.get("sourceUrl")
-		filesize = tr.getServiceInterfaces().values().get(0).getFileSize(sourceUrl)
+		filesize = tr.getServiceInterfaces().values().iterator().next().getFileSize(sourceUrl)
 		tr.addRunLog("Filesize of "+sourceUrl+": "+filesize)
 		filename = FileAndUrlHelpers.getFilename(sourceUrl)
 	}
