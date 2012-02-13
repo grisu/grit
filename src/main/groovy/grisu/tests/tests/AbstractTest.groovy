@@ -71,7 +71,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		return check_comment
 	}
 
-	Exception exception = null
+	Exception executeException = null
 	Exception setupException = null
 	Exception checkException = null
 	Exception tearDownException = null
@@ -451,7 +451,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	void checkTest() {
 		myLogger.debug("Checking test: "+getCertName()+" / "+parallel)
 
-		if (setupException || exception ) {
+		if (setupException || executeException ) {
 			myLogger.debug("Not checking test: "+getCertName()+" /"+parallel)
 			addLog("Not checking test since setup or execution exception exist...")
 			return
@@ -510,7 +510,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 		} catch(all) {
 			addLog "Test error: "+all.getLocalizedMessage()
 			finishedTime = new Date()
-			exception = all
+			executeException = all
 			myLogger.debug("Finished test "+getCertName()+" / "+parallel+ " with error: "+all.getLocalizedMessage())
 			duration = finishedTime.getTime()-startedTime.getTime()
 			addLog("Duration of test execution: "+duration+" ms")
@@ -531,8 +531,8 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 	}
 
 	public String getErrorMessage() {
-		if ( exception ) {
-			return exception.getLocalizedMessage()
+		if ( executeException ) {
+			return executeException.getLocalizedMessage()
 		} else {
 			return ""
 		}

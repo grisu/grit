@@ -3,7 +3,6 @@ package grisu.tests.tests
 import grisu.control.JobConstants
 import grisu.control.ServiceInterface
 import grisu.frontend.model.job.JobObject
-import grisu.jcommons.constants.Constants;
 import grisu.tests.testRuns.TestRun
 
 import com.google.common.collect.Maps
@@ -33,8 +32,8 @@ class GenericJobTest extends AbstractTest implements Test {
 
 	@Override
 	protected void execute() {
-		
-		
+
+
 
 		for (def job : jobs) {
 			addLog("Creating job...")
@@ -103,7 +102,7 @@ class GenericJobTest extends AbstractTest implements Test {
 
 				job.setApplication(application)
 				job.setCommandline('ls -la')
-				
+
 				job.setSubmissionLocation(queue)
 
 				for ( def inputfile : inputfiles) {
@@ -115,6 +114,7 @@ class GenericJobTest extends AbstractTest implements Test {
 				jobs.add(job)
 			} catch (all) {
 				exceptions.add(all)
+				all.printStackTrace()
 			}
 		}
 

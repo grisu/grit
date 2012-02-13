@@ -108,10 +108,16 @@ class DefaultTestLogger implements TestLogger {
 	void testExecuted(AbstractTest test, boolean success) {
 		if (! success ) {
 			String msg = 'n/a'
-			if ( test.getExecuteException() ) {
-				msg = test.getExecuteException().getLocalizedMessage()
+			try {
+				if ( test.getExecuteException() != null ) {
+					msg = test.getExecuteException().getLocalizedMessage()
+				}
+			} catch (all) {
+				all.printStackTrace()
 			}
 			println '\tTest '+test.getName()+' failed to execute: '+msg
+			failed++
+			failedTests.add(test)
 		} else {
 			println '\tTest '+test.getName()+' executed'
 		}
@@ -136,9 +142,18 @@ class DefaultTestLogger implements TestLogger {
 	void getStatus() {
 		String msg = 'Failed tests: '+failed+'\n'
 		if ( failed ) {
-			msg += println '\tError(s):\n'
+			msg += '\tError(s):\n'
 			for ( def test : failedTests ) {
-				msg += '\t\t'+ test.getName()+': '+test.getCheckComment()+'\n'
+				String comment = test.getCheckComment()
+				if ( ! comment || "n/a".equals(comment) ) {
+					if ( test.getExecuteException() ) {
+						comment = test.getExecuteException().getLocalizedMessage()
+					}
+				}
+				if ( ! comment ) {
+					comment = "n/a"
+				}
+				msg += '\t\t'+ test.getName()+': '+comment+'\n'
 			}
 		}
 		msg += 'Successful tests: '+success+'\n\n'

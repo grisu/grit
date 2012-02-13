@@ -60,6 +60,18 @@ class TestRun {
 		}
 	}
 
+	public boolean isFailed() {
+
+		for (AbstractTest test : tests ) {
+
+			if (!test.wasSuccessful()) {
+				return true
+			}
+		}
+
+		return false
+	}
+
 	public void addTestLogger(def l) {
 
 		TestLogger tl = null

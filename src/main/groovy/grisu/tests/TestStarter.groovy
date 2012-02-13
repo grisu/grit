@@ -30,14 +30,27 @@ public class TestStarter {
 	}
 
 
-	public void start() {
+	/**
+	 * Starts all testruns
+	 *
+	 * @return whether all testruns were successful or not
+	 */
+	public boolean start() {
+
+		boolean failedTestRun = false
 
 		for ( tr in testruns ) {
 			tr.setServiceInterfaces(sis)
 			tr.kickOffAndWaitForTestsToFinish()
 			tr.waitForCleanUp()
 			tr.getStatus()
+
+			if ( tr.isFailed() ) {
+				failedTestRun = true
+			}
 		}
+
+		return !failedTestRun
 	}
 
 	public List getTestRuns() {
@@ -96,12 +109,15 @@ public class TestStarter {
 
 		TestStarter ts = new TestStarter(backend, credentials, opt.arguments())
 
-		ts.start()
+		boolean success = ts.start()
+
+		if ( ! success ) {
+			System.exit(1)
+		} else {
+			System.exit(0)
+		}
 
 
-
-
-		System.exit(0)
 	}
 }
 
