@@ -40,7 +40,7 @@ class TestRunFactory {
 			tr.setName(name)
 			tr.setTestClass(testclass)
 
-			def loggers = config.get("logger", new DefaultTestLogger(tr, logDir))
+			def loggers = config.get("logger", new DefaultTestLogger(tr, false, logDir))
 
 			tr.setTestLoggers(loggers)
 

@@ -23,24 +23,24 @@ class DefaultTestLogger implements TestLogger {
 	private def failedTests = []
 	private def checkedTests = []
 
-	public File logDir = new File('.')
+	private boolean init = false
+
+	public String logDir = null
 
 	public DefaultTestLogger(TestRun tr, boolean displayTestLogs, File logdir=new File('.')) {
 		setTestRun(tr)
-		this.displayTestLogs = displayTestLogs
 		this.logDir = logdir
+		this.displayTestLogs = displayTestLogs
 	}
 
-	public DefaultTestLogger(TestRun tr, File logdir=new File('.')) {
-		this(tr, false, logdir)
+	private DefaultTestLogger() {
 	}
 
-	public DefaultTestLogger() {
-	}
 
 	public void setTestRun(TestRun tr) {
 		this.tr = tr
 		getLogFile(tr).delete()
+		getLogFile(tr).createNewFile()
 	}
 
 	public void addTestLogMessage(AbstractTest source, long timestamp, String msg) {
@@ -52,10 +52,29 @@ class DefaultTestLogger implements TestLogger {
 		writeToLogFile(source.getTestRun(), source.getName(), timestamp, msg)
 	}
 
+	public String getLogDir() {
+		if ( ! logDir ) {
+			return "."
+		} else {
+			return this.logDir
+		}
+	}
+
+	private void setLogDir(String logDir) {
+		this.logDir = logDir;
+	}
+
 	private void writeToLogFile(TestRun tr, String testName, long timestamp, String msg) {
 
 		if ( disableFileOutput ) {
 			return
+		}
+
+		if ( ! init ) {
+			if ( ! new File(this.logDir).exists() ) {
+				boolean success = new File(this.logDir).mkdirs()
+			}
+			init = true
 		}
 
 		synchronized (tr) {
@@ -74,7 +93,7 @@ class DefaultTestLogger implements TestLogger {
 	}
 
 	private File getLogFile(TestRun tr) {
-		File logFile = new File(logDir, tr.getName()+'_'+tr.testrunCreated+'.log')
+		File logFile = new File(getLogDir(), tr.getName()+'_'+tr.testrunCreated+'.log')
 		return logFile
 	}
 

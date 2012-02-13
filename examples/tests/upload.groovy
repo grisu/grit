@@ -9,7 +9,7 @@ UploadTest {
 	disable = false
 
 	// how many parallel uploads
-	runs = 10
+	runs = 1
 
 	test {
 		// the class of test to run

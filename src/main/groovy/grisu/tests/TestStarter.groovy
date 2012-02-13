@@ -6,7 +6,7 @@ import grisu.jcommons.utils.Version
 import grisu.jcommons.view.cli.CliHelpers
 import grisu.jcommons.view.cli.LineByLineProgressDisplay
 import grisu.tests.testRuns.TestRunFactory
-import grisu.tests.util.CredentialLoader
+import grith.jgrith.credential.CredentialLoader
 
 public class TestStarter {
 
@@ -66,7 +66,6 @@ public class TestStarter {
 
 		cli.h(longOpt:'help', "Show usage information and quit")
 		cli.b(longOpt:'backend', argName:'backend', args:1, required:true, 'Grisu backend to connect to, required')
-		cli.o(longOpt:'output', argName:'output', args:1, required:false, 'Directory for output (logs etc...)')
 		cli.c(longOpt:'credentials', argName:'credentials', args:1, required:true, 'Path to credential config file')
 
 		def opt = cli.parse(args)

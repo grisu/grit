@@ -4,7 +4,6 @@ import grisu.tests.tests.*
 // the name of the testrun
 genericJob {
 
-
 	// whether to disable this test
 	disable = false
 
