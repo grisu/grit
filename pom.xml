@@ -376,7 +376,7 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.10-SNAPSHOT</version>
+		<version>0.9</version>
 	</parent>
 	<properties>
 		<grisu.version>0.5-SNAPSHOT</grisu.version>
