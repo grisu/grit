@@ -112,7 +112,7 @@ public class TestStarter {
 		boolean success = ts.start()
 
 		if ( ! success ) {
-			System.exit(1)
+			System.exit(2)
 		} else {
 			System.exit(0)
 		}
