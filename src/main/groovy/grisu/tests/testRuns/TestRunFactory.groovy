@@ -33,7 +33,7 @@ class TestRunFactory {
 
 			def testclass = config.get('test').get('type')
 			if ( ! testclass ) {
-				throw new RuntimeException("Could not create testrun, no test type specified...");
+				throw new RuntimeException("Could not create testrun, no valid test type specified...");
 			}
 
 			TestRun tr = new TestRun()

@@ -101,7 +101,7 @@ class GenericJobTest extends AbstractTest implements Test {
 				job.setJobname(this.jobname_prefix+"_"+getCertName()+"_"+getParallelId()+"_j"+i)
 
 				job.setApplication(application)
-				job.setCommandline('ls -la')
+				job.setCommandline(commandline)
 
 				job.setSubmissionLocation(queue)
 
