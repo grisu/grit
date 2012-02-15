@@ -70,7 +70,7 @@ class CredentialLoader {
 			port = MyProxyServerParams.DEFAULT_MYPROXY_PORT
 		}
 
-		Credential c = CredentialFactory.createFromMyProxy(username, password, myproxy, port, lifetime*3600)
+		Credential c = CredentialFactory.createFromMyProxy(username, password.getChars(), myproxy, port, lifetime*3600)
 		return c
 	}
 
