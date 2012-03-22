@@ -9,7 +9,7 @@ import grisu.tests.testRuns.TestRun
 import com.google.common.collect.Lists
 
 /**
- * Submits a bunch of jobs in serial, waits for them to finish and checks whether they they execute with status 0.
+ * Checks whether clean job(s) works.
  * @author Markus Binsteiner
  *
  */

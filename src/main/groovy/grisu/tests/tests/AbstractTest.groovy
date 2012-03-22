@@ -103,7 +103,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 	public boolean reuse_existing_jobs = false
 
-
+	public long memory
 	public int walltime = 60
 
 	public static void killAllJobsWithPrefix(TestRun tr, Map config) {
@@ -176,7 +176,7 @@ abstract class AbstractTest implements Test, PropertyChangeListener {
 
 		job.setApplication(application)
 		job.setCommandline(commandline)
-		
+
 		job.setSubmissionLocation(queue)
 
 		for ( def inputfile : inputfiles) {

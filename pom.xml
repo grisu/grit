@@ -211,6 +211,11 @@
 			<artifactId>grisu-core</artifactId>
 			<version>${grisu.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>${bcprov.version}</version>
+		</dependency>
 	</dependencies>
 	<name>Gri(d|su) Test client written in Groovy</name>
 
@@ -376,9 +381,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.9</version>
+		<version>0.11</version>
 	</parent>
-	<properties>
-		<grisu.version>0.5-SNAPSHOT</grisu.version>
-	</properties>
 </project>

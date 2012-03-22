@@ -45,6 +45,10 @@ class GenericJobEndToEndTest extends AbstractTest implements Test {
 			job.setApplication(application)
 			job.setCommandline(commandline)
 
+			if ( memory ) {
+				job.setMemory(memory)
+			}
+
 			job.setSubmissionLocation(queue)
 
 			for ( def inputfile : inputfiles) {
