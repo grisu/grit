@@ -2,7 +2,7 @@ package grisu.tests.tests
 
 import grisu.control.ServiceInterface
 import grisu.model.FileManager
-import grisu.model.dto.DtoStringList
+import grisu.model.info.dto.DtoStringList;
 import grisu.model.status.StatusObject
 import grisu.tests.testRuns.TestRun
 

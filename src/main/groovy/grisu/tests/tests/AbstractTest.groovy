@@ -5,7 +5,7 @@ import grisu.frontend.model.job.JobObject
 import grisu.jcommons.constants.Constants
 import grisu.model.FileManager
 import grisu.model.GrisuRegistryManager
-import grisu.model.dto.DtoStringList
+import grisu.model.info.dto.DtoStringList;
 import grisu.model.status.StatusObject
 import grisu.tests.testRuns.TestRun
 
